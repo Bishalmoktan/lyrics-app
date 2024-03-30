@@ -1,3 +1,4 @@
+import Footer from '@/components/footer';
 import Navbar from '@/components/navbar/navbar';
 import React from 'react';
 
@@ -7,9 +8,10 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
-    <div className="container">
+    <div className="container space-y-8">
       <Navbar />
       {children}
+      <Footer />
     </div>
   );
 };

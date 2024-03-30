@@ -7,8 +7,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
 } from '@/components//ui/command';
 import { useState } from 'react';
+import { ScrollArea } from '../ui/scroll-area';
 
 const SearchBox = () => {
   const [open, setOpen] = useState(false);
@@ -23,16 +25,26 @@ const SearchBox = () => {
         </p>
         <Search className="w-4 h-4 text-zinc-500 dark:text-zinc-200" />
       </button>
-      <CommandDialog open={open} onOpenChange={setOpen} >
+      <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Type a command or search..." />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Suggestions">
-            <CommandItem>Pop</CommandItem>
-            <CommandItem>Rock</CommandItem>
-            <CommandItem>Lofi</CommandItem>
-          </CommandGroup>
-        </CommandList>
+        <ScrollArea className="border-1 border-black rounded-md">
+          <CommandList>
+            <CommandEmpty className="dark:text-zinc-200">
+              No results found.
+            </CommandEmpty>
+            <CommandGroup heading="Category">
+              <CommandItem>Pop</CommandItem>
+              <CommandItem>Rock</CommandItem>
+              <CommandItem>Lofi</CommandItem>
+            </CommandGroup>
+            <CommandSeparator className=" bg-zinc-200 mb-1" />
+            <CommandGroup heading="Song">
+              <CommandItem>Suna</CommandItem>
+              <CommandItem>Rock</CommandItem>
+              <CommandItem>Lofi</CommandItem>
+            </CommandGroup>
+          </CommandList>
+        </ScrollArea>
       </CommandDialog>
     </>
   );

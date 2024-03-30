@@ -11,7 +11,7 @@ const Navbar = () => {
           <h1 className="text-2xl font-bold">BoSS</h1>
           <Routes />
         </div>
-        <div className="flex gap-2 justify-center">
+        <div className="flex gap-6 items-center">
           <div className="w-[300px] flex-shrink-0">
             <SearchBox />
           </div>
