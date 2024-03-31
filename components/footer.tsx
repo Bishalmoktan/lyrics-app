@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 
 const Footer = () => {
   return (
-    <div className="space-y-4 md:space-y-10">
+    <div className="mt-auto space-y-4 md:space-y-10">
       <h2 className="text-2xl font-bold">BoSS</h2>
       <div className="flex flex-col md:flex-row justify-between gap-4">
         <Routes />

@@ -8,7 +8,7 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
-    <div className="container space-y-8">
+    <div className="container flex flex-col gap-16 min-h-[100vh]">
       <Navbar />
       {children}
       <Footer />

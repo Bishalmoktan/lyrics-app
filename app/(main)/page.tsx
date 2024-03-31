@@ -4,7 +4,7 @@ import Suggestions from '@/components/suggestions';
 
 export default function Home() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-16">
       <HeroSection />
       <Categories />
       <Suggestions />

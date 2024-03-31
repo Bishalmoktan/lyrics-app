@@ -8,12 +8,12 @@ const Artists = () => {
     {
       name: 'Sajjan Raj Vaidya',
       pic: sajjan,
-      designation: 'Singer, Songwrite',
+      designation: 'Singer, Songwriter',
     },
     {
       name: 'Sushant KC',
       pic: sushant,
-      designation: 'Singer, Songwrite',
+      designation: 'Singer, Songwriter',
     },
     {
       name: 'Tribal Rain',
