@@ -6,7 +6,7 @@ import { MobileToggle } from '../mobile-toggle';
 const Navbar = () => {
   return (
     <>
-      <div className="hidden md:flex items-center md:justify-between py-4 animate-move-down">
+      <div className="hidden md:flex items-center md:justify-between py-4">
         <div className="hidden md:flex gap-12 items-center">
           <h1 className="text-2xl font-bold">BoSS</h1>
           <Routes />

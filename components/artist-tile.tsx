@@ -1,4 +1,3 @@
-import sajjan from '@/public/sajjan.jpg';
 import Image, { StaticImageData } from 'next/image';
 
 interface ArtistTitleProps {
