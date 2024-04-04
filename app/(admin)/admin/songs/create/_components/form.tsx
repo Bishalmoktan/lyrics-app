@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
-  CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
@@ -33,6 +32,14 @@ import { Check, ChevronsUpDown } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import {
+  MultiSelector,
+  MultiSelectorContent,
+  MultiSelectorInput,
+  MultiSelectorItem,
+  MultiSelectorList,
+  MultiSelectorTrigger,
+} from '@/components/ui/multi-select';
 
 const songs = [
   { label: 'Sajjan Raj Vaidya', value: 'sajjan' },
@@ -41,12 +48,22 @@ const songs = [
   { label: 'Purna Rai', value: 'purna' },
 ] as const;
 
+const genres = [
+  { label: 'Pop', value: 'pop' },
+  { label: 'Rock', value: 'rock' },
+  { label: 'Folk', value: 'Folk' },
+  { label: 'Lofi', value: 'lofi' },
+];
+
 const formSchema = z.object({
   title: z.string().min(1, {
     message: 'Title is required.',
   }),
   artist: z.string().min(1, {
     message: 'Please select an Artist.',
+  }),
+  genre: z.array(z.string()).min(1, {
+    message: 'Please select a genre.',
   }),
   description: z.string().min(1, {
     message: 'Lyrics cannot be empty',
@@ -61,6 +78,7 @@ export function AddSongForm() {
       title: '',
       artist: '',
       description: '',
+      genre: [],
     },
   });
 
@@ -74,7 +92,7 @@ export function AddSongForm() {
       title: 'You submitted the following values:',
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(values)}</code>
+          <code className="text-white">Hello, testing</code>
         </pre>
       ),
     });
@@ -91,7 +109,7 @@ export function AddSongForm() {
               <FormLabel>Title</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="title"
+                  placeholder="Eg: Najeek"
                   className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
                   {...field}
                 />
@@ -116,15 +134,15 @@ export function AddSongForm() {
                       variant="outline"
                       role="combobox"
                       className={cn(
-                        'max-w-sm justify-between bg-white text-gray-900 hover:bg-white hover:text-gray-900'
-                        // !field.value && 'text-muted-foreground'
+                        'max-w-sm justify-between bg-white text-gray-900 hover:bg-white hover:text-gray-500',
+                        !field.value && 'text-gray-500'
                       )}
                     >
                       {field.value
                         ? songs.find((song) => song.value === field.value)
                             ?.label
                         : 'Select Artist'}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -164,6 +182,44 @@ export function AddSongForm() {
           )}
         />
 
+        {/* genre */}
+        <FormField
+          control={form.control}
+          name="genre"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Lyrics</FormLabel>
+              <FormControl>
+                <MultiSelector
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  loop={false}
+                  className="max-w-sm justify-between bg-white text-gray-900 hover:bg-white hover:text-gray-500"
+                >
+                  <MultiSelectorTrigger>
+                    <MultiSelectorInput
+                      className="max-w-sm justify-between bg-white text-gray-900 hover:bg-white hover:text-gray-500"
+                      placeholder="Choose the genre of the song"
+                    />
+                  </MultiSelectorTrigger>
+                  <MultiSelectorContent>
+                    <MultiSelectorList>
+                      {genres.map((option, i) => (
+                        <MultiSelectorItem key={i} value={option.value}>
+                          {option.label}
+                        </MultiSelectorItem>
+                      ))}
+                    </MultiSelectorList>
+                  </MultiSelectorContent>
+                </MultiSelector>
+              </FormControl>
+              <FormDescription>Enter lyrics of the song.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* lyrics */}
         <FormField
           control={form.control}
           name="description"
@@ -176,6 +232,7 @@ export function AddSongForm() {
                   theme="snow"
                   value={field.value}
                   onChange={field.onChange}
+                  placeholder="Eg: Najeek na aau..."
                 />
               </FormControl>
               <FormDescription>Enter lyrics of the song.</FormDescription>
