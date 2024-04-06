@@ -3,6 +3,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useMemo } from 'react';
+import dynamic from 'next/dynamic';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -30,8 +32,6 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -40,6 +40,8 @@ import {
   MultiSelectorList,
   MultiSelectorTrigger,
 } from '@/components/ui/multi-select';
+
+import 'react-quill/dist/quill.snow.css';
 
 const songs = [
   { label: 'Sajjan Raj Vaidya', value: 'sajjan' },
@@ -71,6 +73,10 @@ const formSchema = z.object({
 });
 
 export function AddSongForm() {
+  const ReactQuill = useMemo(
+    () => dynamic(() => import('react-quill'), { ssr: false }),
+    []
+  );
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

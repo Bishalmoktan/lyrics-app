@@ -3,25 +3,24 @@ import thumbnail from '@/public/song1.jpg';
 import artist from '@/public/samir.jpg';
 import LyricsContainer from './lyrics-container';
 import ArtistTile from '../artist-tile';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '../ui/collapsible';
 import { ReadMore } from './read-more';
 import CommentSection from './comment-section';
 import Songs from '../songs';
+import CustomMusicPlayer from './audio-player';
 
 const SongSection = () => {
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="h-full md:h-[50vh]">
+        <div className="relative h-full md:h-[50vh]">
           <Image
             src={thumbnail}
             className="w-full h-full object-cover rounded-md"
             alt="Song title.."
           />
+          <div className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <CustomMusicPlayer />
+          </div>
         </div>
         <div>
           <LyricsContainer />
