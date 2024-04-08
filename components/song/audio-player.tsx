@@ -75,35 +75,23 @@ const CustomMusicPlayer: React.FC = () => {
       </div>
       <div className="flex gap-2 justify-center items-center">
         <div className="flex flex-col gap-1 items-center">
-          <Button className="rounded-full p-2">
-            <IterationCcw
-              className="-rotate-180 size-4 md:size-6 cursor-pointer"
-              onClick={() => handleSkip(-10)}
-            />
+          <Button className="rounded-full p-2" onClick={() => handleSkip(-10)}>
+            <IterationCcw className="-rotate-180 size-4 md:size-6 cursor-pointer" />
           </Button>
           <p className="text-xs">10s</p>
         </div>
         {isPlaying ? (
-          <Button className="rounded-full p-4">
-            <Pause
-              onClick={handlePlayPause}
-              className="size-6 md:size-8 cursor-pointer"
-            />
+          <Button className="rounded-full p-4" onClick={handlePlayPause}>
+            <Pause className="size-6 md:size-8 cursor-pointer" />
           </Button>
         ) : (
-          <Button className="rounded-full p-4">
-            <Play
-              onClick={handlePlayPause}
-              className="size-6 md:size-8 cursor-pointer"
-            />
+          <Button className="rounded-full p-4" onClick={handlePlayPause}>
+            <Play className="size-6 md:size-8 cursor-pointer" />
           </Button>
         )}
         <div className="flex flex-col gap-1 items-center">
-          <Button className="rounded-full p-2">
-            <IterationCw
-              className="rotate-180 size-4 md:size-6 cursor-pointer"
-              onClick={() => handleSkip(10)}
-            />
+          <Button className="rounded-full p-2" onClick={() => handleSkip(10)}>
+            <IterationCw className="rotate-180 size-4 md:size-6 cursor-pointer" />
           </Button>
           <p className="text-xs">10s</p>
         </div>

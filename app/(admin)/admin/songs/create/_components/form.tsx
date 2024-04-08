@@ -126,6 +126,28 @@ export function AddSongForm() {
           )}
         />
 
+        {/* songId */}
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Song Id</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Eg: qyRrUEInzAs"
+                  className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                You can find it on the song url of youtube.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         {/* artist  */}
         <FormField
           control={form.control}
@@ -194,7 +216,7 @@ export function AddSongForm() {
           name="genre"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Lyrics</FormLabel>
+              <FormLabel>Genre</FormLabel>
               <FormControl>
                 <MultiSelector
                   value={field.value}
@@ -219,7 +241,7 @@ export function AddSongForm() {
                   </MultiSelectorContent>
                 </MultiSelector>
               </FormControl>
-              <FormDescription>Enter lyrics of the song.</FormDescription>
+              <FormDescription>Select the genre of the song.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

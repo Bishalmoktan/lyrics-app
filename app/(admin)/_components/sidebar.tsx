@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Music, Upload, Users } from 'lucide-react';
+import { Music, Undo2, Upload, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -28,6 +28,15 @@ const Sidebar = () => {
 
   return (
     <div className="flex flex-col gap-1">
+      <Link
+        href={'/'}
+        className={cn(
+          'md:hidden flex gap-2 p-3 items-center rounded-md hover:bg-brand-light transition'
+        )}
+      >
+        <Undo2 className="size-8" />
+        <div className="text-xl">{'Home'}</div>
+      </Link>
       {sidebarItems.map((item, index) => {
         const Icon = item.icon;
         return (
@@ -35,7 +44,7 @@ const Sidebar = () => {
             href={item.path}
             key={index}
             className={cn(
-              'flex gap-2 p-3 rounded-md hover:bg-brand-light transition',
+              'flex gap-2 p-3 items-center rounded-md hover:bg-brand-light transition',
               path === item.path && 'bg-brand-light'
             )}
           >
