@@ -1,4 +1,4 @@
-import { Home, Info, LogIn, Mail } from 'lucide-react';
+import { Home, Info, Mail } from 'lucide-react';
 
 export const routes = [
   {
@@ -15,11 +15,6 @@ export const routes = [
     label: 'Contact',
     path: '/contact',
     icon: Mail,
-  },
-  {
-    label: 'Login',
-    path: '/login',
-    icon: LogIn,
   },
 ];
 

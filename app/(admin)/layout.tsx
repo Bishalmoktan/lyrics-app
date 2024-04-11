@@ -1,8 +1,15 @@
 import React from 'react';
 import Header from './_components/header';
 import Sidebar from './_components/sidebar';
+import { auth } from '@/auth';
+import { UserRole } from '@prisma/client';
+import UnauthorizedPage from './_components/unauthorized';
 
-const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
+  const session = await auth();
+  if (session?.user.role !== UserRole.ADMIN) {
+    return <UnauthorizedPage />;
+  }
   return (
     <div className="h-full">
       <Header />

@@ -12,9 +12,9 @@ const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { nextUrl } = req;
-  console.log(nextUrl.pathname);
 
   const isLoggedIn = !!req.auth;
+
   const isApiRoute = nextUrl.pathname.startsWith(apiPrefix);
   const isPublicRoute =
     publicRoutes.includes(nextUrl.pathname) ||
@@ -22,21 +22,21 @@ export default auth((req) => {
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
   if (isApiRoute) {
-    return null;
+    return;
   }
 
   if (isAuthRoute) {
     if (isLoggedIn) {
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
     }
-    return null;
+    return;
   }
 
   if (!isLoggedIn && !isPublicRoute) {
     return Response.redirect(new URL('/login', nextUrl));
   }
 
-  return null;
+  return;
 });
 
 export const config = {

@@ -3,8 +3,10 @@ import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import MobileRoutes from './navbar/mobile-routes';
+import { auth } from '@/auth';
 
-export const MobileToggle = () => {
+export const MobileToggle = async () => {
+  const session = await auth();
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -14,7 +16,7 @@ export const MobileToggle = () => {
       </SheetTrigger>
       <SheetContent side="left">
         <div className="w-[72px]">
-          <MobileRoutes />
+          <MobileRoutes session={session} />
         </div>
       </SheetContent>
     </Sheet>
