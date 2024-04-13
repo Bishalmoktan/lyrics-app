@@ -3,8 +3,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { CldUploadWidget, CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -30,8 +31,7 @@ import {
 } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { Check, ChevronsUpDown } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import { Check, ChevronsUpDown, Upload } from 'lucide-react';
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -42,6 +42,10 @@ import {
 } from '@/components/ui/multi-select';
 
 import 'react-quill/dist/quill.snow.css';
+import { postSong } from '@/lib/actions';
+import Image from 'next/image';
+import { Textarea } from '@/components/ui/textarea';
+import { Artist } from '@prisma/client';
 
 const songs = [
   { label: 'Sajjan Raj Vaidya', value: 'sajjan' },
@@ -57,22 +61,28 @@ const genres = [
   { label: 'Lofi', value: 'lofi' },
 ];
 
-const formSchema = z.object({
+export const formSchema = z.object({
   title: z.string().min(1, {
     message: 'Title is required.',
   }),
+  songId: z.string().min(1, {
+    message: 'Song id is required.',
+  }),
+  story: z.string(),
   artist: z.string().min(1, {
     message: 'Please select an Artist.',
   }),
   genre: z.array(z.string()).min(1, {
     message: 'Please select a genre.',
   }),
-  description: z.string().min(1, {
+  lyrics: z.string().min(1, {
     message: 'Lyrics cannot be empty',
   }),
 });
 
-export function AddSongForm() {
+export function AddSongForm({ artists }: { artists: Artist[] }) {
+  const [thumbnail, setThumbnail] = useState('');
+
   const ReactQuill = useMemo(
     () => dynamic(() => import('react-quill'), { ssr: false }),
     []
@@ -83,7 +93,9 @@ export function AddSongForm() {
     defaultValues: {
       title: '',
       artist: '',
-      description: '',
+      songId: '',
+      lyrics: '',
+      story: '',
       genre: [],
     },
   });
@@ -92,16 +104,7 @@ export function AddSongForm() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
-
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">Hello, testing</code>
-        </pre>
-      ),
-    });
+    postSong({ thumbnail, ...values });
   }
 
   return (
@@ -129,7 +132,7 @@ export function AddSongForm() {
         {/* songId */}
         <FormField
           control={form.control}
-          name="title"
+          name="songId"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Song Id</FormLabel>
@@ -142,6 +145,28 @@ export function AddSongForm() {
               </FormControl>
               <FormDescription>
                 You can find it on the song url of youtube.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* story */}
+        <FormField
+          control={form.control}
+          name="story"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Song Story</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Eg: This is about situationship"
+                  className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                Note: You can add the story later.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -167,8 +192,8 @@ export function AddSongForm() {
                       )}
                     >
                       {field.value
-                        ? songs.find((song) => song.value === field.value)
-                            ?.label
+                        ? artists.find((artist) => artist.id === field.value)
+                            ?.name
                         : 'Select Artist'}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0" />
                     </Button>
@@ -179,23 +204,23 @@ export function AddSongForm() {
                     <CommandInput placeholder="Search artist..." />
                     <CommandEmpty>No artist found.</CommandEmpty>
                     <CommandList>
-                      {songs.map((song) => (
+                      {artists.map((artist) => (
                         <CommandItem
-                          value={song.label}
-                          key={song.value}
+                          value={artist.name}
+                          key={artist.id}
                           onSelect={() => {
-                            form.setValue('artist', song.value);
+                            form.setValue('artist', artist.id);
                           }}
                         >
                           <Check
                             className={cn(
                               'mr-2 h-4 w-4',
-                              song.value === field.value
+                              artist.id === field.value
                                 ? 'opacity-100'
                                 : 'opacity-0'
                             )}
                           />
-                          {song.label}
+                          <span> {artist.name}</span>
                         </CommandItem>
                       ))}
                     </CommandList>
@@ -247,10 +272,46 @@ export function AddSongForm() {
           )}
         />
 
+        {/* upload image widget  */}
+        <div>
+          <p>Thumbnail</p>
+          <CldUploadWidget
+            options={{
+              folder: 'thumbnails',
+            }}
+            signatureEndpoint={'/api/sign-cloudinary-params'}
+            onSuccess={(result) => {
+              const info = result.info as CloudinaryUploadWidgetInfo;
+              setThumbnail(info.secure_url);
+            }}
+          >
+            {({ open }) => {
+              return (
+                <div
+                  onClick={() => open()}
+                  className="cursor-pointer text-gray-300"
+                >
+                  <Upload className="size-16" />
+                  <p>Upload image</p>
+                </div>
+              );
+            }}
+          </CldUploadWidget>
+
+          {thumbnail !== '' && (
+            <Image
+              src={thumbnail}
+              alt="Preview Image"
+              height={'400'}
+              width={'600'}
+            />
+          )}
+        </div>
+
         {/* lyrics */}
         <FormField
           control={form.control}
-          name="description"
+          name="lyrics"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Lyrics</FormLabel>

@@ -1,7 +1,9 @@
 import { Separator } from '@/components/ui/separator';
 import { AddSongForm } from './_components/form';
+import { getAllArtist } from '@/lib/actions';
 
-const AdminAddSongPage = () => {
+const AdminAddSongPage = async () => {
+  const artists = await getAllArtist();
   return (
     <div className="space-y-4 pb-4">
       <div>
@@ -9,7 +11,7 @@ const AdminAddSongPage = () => {
         <p className="text-zinc-500">Add lyrics of a song!</p>
       </div>
       <Separator className="bg-zinc-300" />
-      <AddSongForm />
+      <AddSongForm artists={artists} />
     </div>
   );
 };

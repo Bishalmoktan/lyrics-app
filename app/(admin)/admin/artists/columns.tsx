@@ -9,18 +9,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Artist, Song } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { Edit, MoreHorizontal, ArrowUpDown, Trash2Icon } from 'lucide-react';
 
-export type User = {
-  id: string;
-  name: string;
-  songsPosted: Number;
-  role: string;
-  email: string;
-};
+// export type Artist = {
+//   id: string;
+//   name: string;
+//   songs: number;
+//   designation: string;
+// };
 
-export const columns: ColumnDef<User>[] = [
+interface IArtist extends Artist {
+  songs: Song[];
+}
+
+export const columns: ColumnDef<IArtist>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => {
@@ -30,24 +34,28 @@ export const columns: ColumnDef<User>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Name
+          Artist Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
-      const person = row.original;
+      const artist = row.original;
       return (
         <div className="">
-          <h3 className="text-xl">{person.name}</h3>
-          <p className="text-sm text-zinc-500">{person.role}</p>
+          <h3 className="text-xl">{artist.name}</h3>
+          <p className="text-sm text-zinc-500">{artist.designation}</p>
         </div>
       );
     },
   },
   {
-    accessorKey: 'songsPosted',
-    header: 'Songs posted',
+    accessorKey: 'songs',
+    header: 'Songs',
+    cell: ({ row }) => {
+      const artist = row.original;
+      return <h3 className="text-xl">{artist.songs.length}</h3>;
+    },
   },
   {
     id: 'actions',

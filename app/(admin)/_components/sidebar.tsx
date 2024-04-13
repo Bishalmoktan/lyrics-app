@@ -1,7 +1,14 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Music, Undo2, Upload, Users } from 'lucide-react';
+import {
+  MicVocal,
+  Music,
+  Undo2,
+  Upload,
+  UserRoundPlus,
+  Users,
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -18,9 +25,19 @@ const Sidebar = () => {
       icon: Users,
     },
     {
+      label: 'Artists',
+      path: '/admin/artists',
+      icon: MicVocal,
+    },
+    {
       label: 'Add Song',
       path: '/admin/songs/create',
       icon: Upload,
+    },
+    {
+      label: 'Create Artist',
+      path: '/admin/artists/create',
+      icon: UserRoundPlus,
     },
   ];
 

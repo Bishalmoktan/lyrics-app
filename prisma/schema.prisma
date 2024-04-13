@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -41,4 +42,32 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+}
+
+model Artist {
+  id          String @id @default(cuid())
+  avatar_url  String
+  name        String
+  designation String
+  songs       Song[]
+}
+
+model Genre {
+  id    String @id @default(cuid())
+  name  String
+  songs Song[]
+}
+
+model Song {
+  id        String  @id @default(cuid())
+  thumbnail String
+  lyrics    String
+  title     String
+  songId    String
+  story     String?
+
+  Artist   Artist? @relation(fields: [artistId], references: [id])
+  artistId String?
+
+  Genre Genre[]
 }
