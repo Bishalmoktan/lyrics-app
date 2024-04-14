@@ -1,13 +1,12 @@
 import { DataTable } from '@/components/data-table';
 import { Separator } from '@/components/ui/separator';
-import { User, columns } from './columns';
-import axios from 'axios';
+import { columns } from './columns';
+import { getAllUsers } from '@/lib/actions';
 
 const getData = async () => {
-  const res = await axios.get(
-    'https://660d3a6a6ddfa2943b339fe1.mockapi.io/api/songs/users'
-  );
-  return res.data as User[];
+  const res = await getAllUsers();
+
+  return res;
 };
 
 const AdminUsersPage = async () => {

@@ -13,13 +13,6 @@ import { Artist, Song } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { Edit, MoreHorizontal, ArrowUpDown, Trash2Icon } from 'lucide-react';
 
-// export type Artist = {
-//   id: string;
-//   name: string;
-//   songs: number;
-//   designation: string;
-// };
-
 interface IArtist extends Artist {
   songs: Song[];
 }

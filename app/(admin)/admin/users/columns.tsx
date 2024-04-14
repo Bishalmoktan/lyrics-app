@@ -9,18 +9,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Song, User } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { Edit, MoreHorizontal, ArrowUpDown, Trash2Icon } from 'lucide-react';
 
-export type User = {
-  id: string;
-  name: string;
-  songsPosted: Number;
-  role: string;
-  email: string;
-};
+type UserType = Omit<User, 'password' | 'emailVerified'>;
 
-export const columns: ColumnDef<User>[] = [
+interface IUser extends UserType {
+  songs: Song[];
+}
+
+export const columns: ColumnDef<IUser>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => {
@@ -46,8 +45,16 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
+    accessorKey: 'email',
+    header: 'Email',
+  },
+  {
     accessorKey: 'songsPosted',
     header: 'Songs posted',
+    cell: ({ row }) => {
+      const user = row.original;
+      return <h3 className="text-xl">{user.songs.length}</h3>;
+    },
   },
   {
     id: 'actions',

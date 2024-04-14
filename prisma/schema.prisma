@@ -23,6 +23,7 @@ model User {
   password      String?
   image         String?
   accounts      Account[]
+  songs         Song[]
 }
 
 model Account {
@@ -68,6 +69,8 @@ model Song {
 
   Artist   Artist? @relation(fields: [artistId], references: [id])
   artistId String?
+  User     User    @relation(fields: [userId], references: [id])
+  userId   String
 
   Genre Genre[]
 }
