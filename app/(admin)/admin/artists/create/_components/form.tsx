@@ -47,11 +47,19 @@ export function AddSongForm() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const res = await createArtist({ avatar, ...values });
-    console.log(res);
-    toast.success('Artist created successfully.');
-    form.reset();
-    setAvatar('');
+    if (avatar === '') {
+      toast.error('Please upload a picture');
+      return;
+    }
+    try {
+      const res = await createArtist({ avatar, ...values });
+      toast.success(res.msg);
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      form.reset();
+      setAvatar('');
+    }
   }
 
   return (

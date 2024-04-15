@@ -3,13 +3,8 @@ import { Separator } from '@/components/ui/separator';
 import { columns } from './columns';
 import { getAllArtist } from '@/lib/actions';
 
-const getData = async () => {
-  const res = await getAllArtist();
-  return res;
-};
-
 const AdminArtistPage = async () => {
-  const data = await getData();
+  const data = await getAllArtist();
   return (
     <div className="space-y-4">
       <div>

@@ -4,6 +4,8 @@ import { formSchema } from '@/app/(admin)/admin/songs/create/_components/form';
 import { formSchema as artistFormSchema } from '@/app/(admin)/admin/artists/create/_components/form';
 import { z } from 'zod';
 import { db } from './db';
+import { auth } from '@/auth';
+import { Song } from '@/app/(admin)/admin/songs/columns';
 
 type postSongData = z.infer<typeof formSchema>;
 
@@ -17,7 +19,44 @@ interface IPostSongData extends postSongData {
  * @type {IPostSongData[]}
  */
 export const postSong = async (data: IPostSongData) => {
-  console.log(data);
+  const { artist, genre, songId, lyrics, story, thumbnail, title } = data;
+  try {
+    const session = await auth();
+    if (!session) {
+      throw new Error('Unauthorized');
+    }
+    const song = await db.song.findFirst({
+      where: {
+        title: title,
+        artistId: artist,
+      },
+    });
+
+    if (song) {
+      throw new Error('Song with the title and the artist already exists');
+    }
+
+    await db.song.create({
+      data: {
+        lyrics,
+        artistId: artist,
+        songId,
+        thumbnail,
+        title,
+        userId: session.user.id!,
+        story,
+        Genre: {
+          connect: genre.map((name) => ({ name })),
+        },
+      },
+    });
+
+    return {
+      msg: 'Song added successfully!',
+    };
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
 };
 
 type createArtistData = z.infer<typeof artistFormSchema>;
@@ -32,6 +71,14 @@ interface ICreateArtistData extends createArtistData {
  */
 export const createArtist = async (data: ICreateArtistData) => {
   try {
+    const artist = await db.artist.findFirst({
+      where: {
+        name: data.name,
+      },
+    });
+    if (artist) {
+      throw new Error('Artist already exits!');
+    }
     await db.artist.create({
       data: {
         name: data.name,
@@ -43,9 +90,38 @@ export const createArtist = async (data: ICreateArtistData) => {
     return {
       msg: 'Artist created successfully!',
     };
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-    throw new Error('Error creating the artist');
+    throw new Error(error.message);
+  }
+};
+
+/**
+ * A server actions to create a new genre
+ * Takes an genre name as parameter
+ * @type {string}
+ */
+export const createGenre = async (data: string) => {
+  try {
+    const genre = await db.genre.findUnique({
+      where: {
+        name: data,
+      },
+    });
+    if (genre) {
+      throw new Error('Genre already exists');
+    }
+    await db.genre.create({
+      data: {
+        name: data,
+      },
+    });
+    return {
+      msg: 'Genre created successfully!',
+    };
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
   }
 };
 
@@ -61,9 +137,22 @@ export const getAllArtist = async () => {
       },
     });
     return res;
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-    throw new Error('Error getting the artist');
+    throw new Error(error.message);
+  }
+};
+
+/**
+ * A server action that returns all the genre
+ * Doesn't take any parameter
+ */
+export const getAllGenre = async () => {
+  try {
+    const res = await db.genre.findMany({});
+    return res;
+  } catch (error: any) {
+    throw new Error(error.message);
   }
 };
 
@@ -84,6 +173,25 @@ export const getAllUsers = async () => {
       },
     });
     return res;
+  } catch (error) {
+    console.log(error);
+    throw new Error('Error getting the users');
+  }
+};
+/**
+ * A server action that returns all the users
+ * Doesn't take any parameter
+ */
+export const getAllSongs = async () => {
+  try {
+    const res = await db.song.findMany({
+      select: {
+        Artist: true,
+        title: true,
+        User: true,
+      },
+    });
+    return res as Song[];
   } catch (error) {
     console.log(error);
     throw new Error('Error getting the users');

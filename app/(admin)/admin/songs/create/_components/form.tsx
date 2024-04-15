@@ -45,21 +45,10 @@ import 'react-quill/dist/quill.snow.css';
 import { postSong } from '@/lib/actions';
 import Image from 'next/image';
 import { Textarea } from '@/components/ui/textarea';
-import { Artist } from '@prisma/client';
-
-const songs = [
-  { label: 'Sajjan Raj Vaidya', value: 'sajjan' },
-  { label: 'Sushant KC', value: 'sushant' },
-  { label: 'John Chamling', value: 'john' },
-  { label: 'Purna Rai', value: 'purna' },
-] as const;
-
-const genres = [
-  { label: 'Pop', value: 'pop' },
-  { label: 'Rock', value: 'rock' },
-  { label: 'Folk', value: 'Folk' },
-  { label: 'Lofi', value: 'lofi' },
-];
+import { Artist, Genre } from '@prisma/client';
+import CreateGenre from './create-genre';
+import Link from 'next/link';
+import { toast } from 'sonner';
 
 export const formSchema = z.object({
   title: z.string().min(1, {
@@ -80,14 +69,18 @@ export const formSchema = z.object({
   }),
 });
 
-export function AddSongForm({ artists }: { artists: Artist[] }) {
+interface AddSongFormProps {
+  artists: Artist[];
+  genres: Genre[];
+}
+
+export function AddSongForm({ artists, genres }: AddSongFormProps) {
   const [thumbnail, setThumbnail] = useState('');
 
   const ReactQuill = useMemo(
     () => dynamic(() => import('react-quill'), { ssr: false }),
     []
   );
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -100,11 +93,20 @@ export function AddSongForm({ artists }: { artists: Artist[] }) {
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    postSong({ thumbnail, ...values });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (thumbnail === '') {
+      toast.error('Please upload a picture');
+      return;
+    }
+    try {
+      const res = await postSong({ thumbnail, ...values });
+      toast.success(res?.msg);
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      form.reset();
+      setThumbnail('');
+    }
   }
 
   return (
@@ -202,7 +204,15 @@ export function AddSongForm({ artists }: { artists: Artist[] }) {
                 <PopoverContent className="max-w-sm p-0">
                   <Command>
                     <CommandInput placeholder="Search artist..." />
-                    <CommandEmpty>No artist found.</CommandEmpty>
+                    <CommandEmpty>
+                      <span>Artist not found. </span>
+                      <Link
+                        href={'/admin/artists/create'}
+                        className="underline"
+                      >
+                        Create Artist
+                      </Link>
+                    </CommandEmpty>
                     <CommandList>
                       {artists.map((artist) => (
                         <CommandItem
@@ -228,7 +238,13 @@ export function AddSongForm({ artists }: { artists: Artist[] }) {
                 </PopoverContent>
               </Popover>
               <FormDescription>
-                Select the arist. Artist not found? Create here
+                Select the arist. Artist not found?{' '}
+                <Link
+                  href={'/admin/artists/create'}
+                  className="underline underline-offset-1"
+                >
+                  Create here
+                </Link>
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -258,15 +274,18 @@ export function AddSongForm({ artists }: { artists: Artist[] }) {
                   <MultiSelectorContent>
                     <MultiSelectorList>
                       {genres.map((option, i) => (
-                        <MultiSelectorItem key={i} value={option.value}>
-                          {option.label}
+                        <MultiSelectorItem key={i} value={option.name}>
+                          {option.name}
                         </MultiSelectorItem>
                       ))}
                     </MultiSelectorList>
                   </MultiSelectorContent>
                 </MultiSelector>
               </FormControl>
-              <FormDescription>Select the genre of the song.</FormDescription>
+              <FormDescription>
+                Genre not found?
+                <CreateGenre />
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

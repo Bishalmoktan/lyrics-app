@@ -1,17 +1,10 @@
 import { DataTable } from '@/components/data-table';
 import { Separator } from '@/components/ui/separator';
-import { Song, columns } from './columns';
-import axios from 'axios';
-
-const getData = async () => {
-  const res = await axios.get(
-    'https://660d3a6a6ddfa2943b339fe1.mockapi.io/api/songs/songs'
-  );
-  return res.data as Song[];
-};
+import { columns } from './columns';
+import { getAllSongs } from '@/lib/actions';
 
 const AdminSongsPage = async () => {
-  const data = await getData();
+  const data = await getAllSongs();
   return (
     <div className="space-y-4">
       <div>
