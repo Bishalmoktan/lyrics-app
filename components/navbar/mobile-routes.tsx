@@ -11,7 +11,9 @@ import { usePathname } from 'next/navigation';
 
 const MobileRoutes = ({ session }: { session: Session | null }) => {
   const path = usePathname();
-  const isAdmin = session?.user.role === UserRole.ADMIN;
+  const isUserPrivileged =
+    session?.user.role === UserRole.ADMIN ||
+    session?.user.role === UserRole.MODERATOR;
   const isLoggedIn = !!session;
   const handleSignOut = async () => {
     await signOut();
@@ -38,7 +40,7 @@ const MobileRoutes = ({ session }: { session: Session | null }) => {
             </Link>
           );
         })}
-        {isAdmin && (
+        {isUserPrivileged && (
           <Link
             className={cn(
               'w-[50vw] rounded-md p-2 flex gap-8 hover:bg-brand-light'

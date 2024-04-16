@@ -9,7 +9,9 @@ import { usePathname } from 'next/navigation';
 
 const Routes = ({ session }: { session: Session | null }) => {
   const path = usePathname();
-  const isAdmin = session?.user.role === UserRole.ADMIN;
+  const isUserPrivileged =
+    session?.user.role === UserRole.ADMIN ||
+    session?.user.role === UserRole.MODERATOR;
   const isLoggedIn = !!session;
   const handleSignOut = async () => {
     await signOut();
@@ -28,7 +30,7 @@ const Routes = ({ session }: { session: Session | null }) => {
           {route.label}
         </Link>
       ))}
-      {isAdmin && (
+      {isUserPrivileged && (
         <Link
           className={cn('text-lg text-zinc-500 hover:text-white transition')}
           href={'/admin/songs'}

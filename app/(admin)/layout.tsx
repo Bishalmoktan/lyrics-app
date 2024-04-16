@@ -5,10 +5,12 @@ import Sidebar from './_components/sidebar';
 import { auth } from '@/auth';
 import { UserRole } from '@prisma/client';
 import UnauthorizedPage from './_components/unauthorized';
+import { ModalProvider } from '@/components/providers/modal-provider';
+import { ModalContextProvider } from '@/components/providers/modal-context-providers';
 
 const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
-  if (session?.user.role !== UserRole.ADMIN) {
+  if (session?.user.role === UserRole.USER) {
     return <UnauthorizedPage />;
   }
   return (
@@ -19,8 +21,11 @@ const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
           <Sidebar />
         </div>
         <main className="md:pl-[250px] px-4 md:pr-8 h-full">
-          {children}
-          <Toaster richColors />
+          <ModalContextProvider>
+            {children}
+            <Toaster richColors />
+            <ModalProvider />
+          </ModalContextProvider>
         </main>
       </div>
     </div>

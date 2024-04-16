@@ -5,7 +5,6 @@ import { getAllUsers } from '@/lib/actions';
 
 const getData = async () => {
   const res = await getAllUsers();
-
   return res;
 };
 

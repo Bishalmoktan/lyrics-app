@@ -7,14 +7,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { useModal } from '@/hooks/use-modal';
 import { createGenre } from '@/lib/actions';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-const CreateGenre = () => {
+const CreateGenreModal = () => {
+  const { closeModal, isOpen, type } = useModal();
+  const isModalOpen = isOpen && type === 'createGenre';
   const [genre, setGenre] = useState('');
   const handleSave = async () => {
     if (genre === '') {
@@ -26,17 +28,18 @@ const CreateGenre = () => {
       toast.success(res.msg);
     } catch (error: any) {
       toast.error(error.message);
+    } finally {
+      setGenre('');
+      handleClose();
     }
+  };
+
+  const handleClose = () => {
     setGenre('');
+    closeModal();
   };
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <span className="underline underline-offset-1 ml-1 cursor-pointer">
-          {' '}
-          Create Genre
-        </span>
-      </DialogTrigger>
+    <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create Genre</DialogTitle>
@@ -65,4 +68,4 @@ const CreateGenre = () => {
   );
 };
 
-export default CreateGenre;
+export default CreateGenreModal;

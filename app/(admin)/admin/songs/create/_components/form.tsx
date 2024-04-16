@@ -46,9 +46,9 @@ import { postSong } from '@/lib/actions';
 import Image from 'next/image';
 import { Textarea } from '@/components/ui/textarea';
 import { Artist, Genre } from '@prisma/client';
-import CreateGenre from './create-genre';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { useModal } from '@/hooks/use-modal';
 
 export const formSchema = z.object({
   title: z.string().min(1, {
@@ -75,6 +75,7 @@ interface AddSongFormProps {
 }
 
 export function AddSongForm({ artists, genres }: AddSongFormProps) {
+  const { openModal } = useModal();
   const [thumbnail, setThumbnail] = useState('');
 
   const ReactQuill = useMemo(
@@ -284,7 +285,13 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
               </FormControl>
               <FormDescription>
                 Genre not found?
-                <CreateGenre />
+                <span
+                  className="underline cursor-pointer"
+                  onClick={() => openModal('createGenre')}
+                >
+                  {' '}
+                  Create Genre
+                </span>
               </FormDescription>
               <FormMessage />
             </FormItem>
