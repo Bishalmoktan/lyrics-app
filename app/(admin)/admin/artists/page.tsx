@@ -12,7 +12,7 @@ const AdminArtistPage = async () => {
         <p className="text-zinc-500">Here are the lists of songs!</p>
       </div>
       <Separator className="bg-zinc-300" />
-      <DataTable columns={columns} data={data} placeholder="songs" />
+      <DataTable columns={columns} data={data} placeholder="artists" />
     </div>
   );
 };

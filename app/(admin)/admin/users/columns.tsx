@@ -11,11 +11,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Song, User } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
-import { Edit, MoreHorizontal, ArrowUpDown, Trash2Icon } from 'lucide-react';
+import { MoreHorizontal, ArrowUpDown } from 'lucide-react';
+import DeleteUserButton from './_components/delete-user-button';
+import EditUserButton from './_components/edit-user-button';
 
 type UserType = Omit<User, 'password' | 'emailVerified'>;
 
-interface IUser extends UserType {
+export interface IUser extends UserType {
   songs: Song[];
 }
 
@@ -71,10 +73,10 @@ export const columns: ColumnDef<IUser>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="space-x-3">
-              <Edit /> <span> Edit</span>
+              <EditUserButton user={row.original} />
             </DropdownMenuItem>
             <DropdownMenuItem className="space-x-3">
-              <Trash2Icon /> <span>Delete</span>
+              <DeleteUserButton user={row.original} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

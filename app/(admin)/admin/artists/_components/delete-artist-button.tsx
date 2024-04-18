@@ -1,17 +1,17 @@
 'use client';
 import { useModal } from '@/hooks/use-modal';
 import { Trash2Icon } from 'lucide-react';
-import { Song } from '../columns';
+import { IArtist } from '../columns';
 
-const DeleteSongButton = ({ song }: { song: Song }) => {
+const DeleteArtistButton = ({ artist }: { artist: IArtist }) => {
   const { openModal } = useModal();
   return (
     <div
       className="flex gap-3 cursor-pointer"
-      onClick={() => openModal('deleteSong', { song: song })}
+      onClick={() => openModal('deleteArtist', { artist })}
     >
       <Trash2Icon /> <span>Delete</span>
     </div>
   );
 };
-export default DeleteSongButton;
+export default DeleteArtistButton;

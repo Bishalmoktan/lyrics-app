@@ -179,13 +179,14 @@ export const getAllUsers = async () => {
   }
 };
 /**
- * A server action that returns all the users
+ * A server action that returns all the songs
  * Doesn't take any parameter
  */
 export const getAllSongs = async () => {
   try {
     const res = await db.song.findMany({
       select: {
+        id: true,
         Artist: true,
         title: true,
         User: true,
@@ -194,6 +195,32 @@ export const getAllSongs = async () => {
     return res as Song[];
   } catch (error) {
     console.log(error);
-    throw new Error('Error getting the users');
+    throw new Error('Error getting the songs');
   }
+};
+/**
+ * A server action that returns all the songs
+ * Doesn't take any parameter
+ */
+export const getSongDetail = async (id: string) => {
+  try {
+    const res = await db.song.findUnique({
+      where: {
+        id,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+    throw new Error('Error getting the song');
+  }
+};
+
+/**
+ * Get current User
+ * @returns {Session | null}
+ */
+export const getCurrentUser = async () => {
+  const session = await auth();
+  return session;
 };

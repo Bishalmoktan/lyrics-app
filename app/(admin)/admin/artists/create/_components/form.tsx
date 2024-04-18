@@ -23,6 +23,7 @@ import 'react-quill/dist/quill.snow.css';
 import Image from 'next/image';
 import { createArtist } from '@/lib/actions';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export const formSchema = z.object({
   name: z.string().min(1, {
@@ -35,6 +36,7 @@ export const formSchema = z.object({
 
 export function AddSongForm() {
   const [avatar, setAvatar] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -44,6 +46,7 @@ export function AddSongForm() {
       designation: '',
     },
   });
+  const router = useRouter();
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -52,12 +55,15 @@ export function AddSongForm() {
       return;
     }
     try {
+      setLoading(true);
       const res = await createArtist({ avatar, ...values });
       toast.success(res.msg);
+      router.refresh();
     } catch (error: any) {
       toast.error(error.message);
     } finally {
       form.reset();
+      setLoading(false);
       setAvatar('');
     }
   }
@@ -144,6 +150,7 @@ export function AddSongForm() {
         </div>
 
         <Button
+          disabled={loading}
           type="submit"
           className="bg-rose-500 hover:bg-rose-700 text-white hover:text-white"
         >

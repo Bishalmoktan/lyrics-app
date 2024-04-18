@@ -18,12 +18,14 @@ const CreateGenreModal = () => {
   const { closeModal, isOpen, type } = useModal();
   const isModalOpen = isOpen && type === 'createGenre';
   const [genre, setGenre] = useState('');
+  const [loading, setLoading] = useState(false);
   const handleSave = async () => {
     if (genre === '') {
       toast.error('Genre cannot be empty!');
       return;
     }
     try {
+      setLoading(true);
       const res = await createGenre(genre);
       toast.success(res.msg);
     } catch (error: any) {
@@ -31,6 +33,7 @@ const CreateGenreModal = () => {
     } finally {
       setGenre('');
       handleClose();
+      setLoading(false);
     }
   };
 
@@ -57,6 +60,7 @@ const CreateGenreModal = () => {
         </div>
         <DialogFooter>
           <Button
+            disabled={loading}
             onClick={handleSave}
             className="bg-rose-500 text-whtie hover:bg-rose-700"
           >

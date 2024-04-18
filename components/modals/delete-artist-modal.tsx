@@ -9,26 +9,26 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useModal } from '@/hooks/use-modal';
-import { deleteSong } from '@/lib/modal-actions';
+import { deleteArtist } from '@/lib/modal-actions';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-const DeleteSongModal = () => {
+const DeleteArtistModal = () => {
   const { closeModal, isOpen, type, data } = useModal();
-  const { song } = data;
+  const { artist } = data;
   const [loading, setLoading] = useState(false);
-  const isModalOpen = isOpen && type === 'deleteSong';
+  const isModalOpen = isOpen && type === 'deleteArtist';
   const router = useRouter();
   const handleDelete = async () => {
     try {
       setLoading(true);
-      if (song) {
-        const deletedSong = await deleteSong(song);
-        toast.success(`${deletedSong.msg}`);
+      if (artist) {
+        const deletedArtist = await deleteArtist(artist);
+        toast.success(deletedArtist.msg);
         router.refresh();
       } else {
-        throw new Error(`Song doesn't exists`);
+        throw new Error('Artist not found');
       }
     } catch (error: any) {
       toast.error(error.message);
@@ -45,12 +45,12 @@ const DeleteSongModal = () => {
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-center">Delete Song</DialogTitle>
+          <DialogTitle className="text-center">Delete Artist</DialogTitle>
           <DialogDescription className="text-zinc-500 text-center">
             Are you sure want to do this? <br />
             <span className="font-semibold text-indigo-500">
               {' '}
-              {song?.title}{' '}
+              {artist?.name}{' '}
             </span>{' '}
             will be permanently deleted.
           </DialogDescription>
@@ -80,4 +80,4 @@ const DeleteSongModal = () => {
   );
 };
 
-export default DeleteSongModal;
+export default DeleteArtistModal;

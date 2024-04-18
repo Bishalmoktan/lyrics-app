@@ -1,11 +1,22 @@
 'use client';
 
+import { IArtist } from '@/app/(admin)/admin/artists/columns';
 import { Song } from '@/app/(admin)/admin/songs/columns';
+import { IUser } from '@/app/(admin)/admin/users/columns';
 import React, { createContext, useState } from 'react';
 
-type modalType = 'createGenre' | 'deleteSong' | null;
+type modalType =
+  | 'createGenre'
+  | 'deleteSong'
+  | 'deleteArtist'
+  | 'deleteUser'
+  | 'updateUser'
+  | 'updateArtist'
+  | null;
 type modalDataType = {
   song?: Song;
+  artist?: IArtist;
+  user?: IUser;
 };
 
 export type ModalContextType = {
@@ -32,7 +43,6 @@ export const ModalContextProvider = ({
       setData(data);
     }
     setType(type);
-    console.log(type);
     setIsOpen(true);
   };
   const closeModal = () => {

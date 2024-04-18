@@ -13,8 +13,10 @@ import { Artist, User } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { Edit, MoreHorizontal, ArrowUpDown } from 'lucide-react';
 import DeleteSongButton from './_components/delete-song-button';
+import Link from 'next/link';
 
 export interface Song {
+  id: string;
   title: string;
   Artist: Artist;
   User: User;
@@ -50,7 +52,12 @@ export const columns: ColumnDef<Song>[] = [
     header: 'Posted by',
     cell: ({ row }) => {
       const song = row.original;
-      return <h3 className="text-lg">{song.User.name}</h3>;
+      return (
+        <div className="">
+          <h3 className="text-xl">{song.User.name}</h3>
+          <p className="text-sm text-zinc-500">{song.User.email}</p>
+        </div>
+      );
     },
   },
   {
@@ -68,7 +75,7 @@ export const columns: ColumnDef<Song>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="space-x-3">
-              <Edit /> <span> Edit</span>
+              <Edit /> <Link href={`/admin/songs/update?id=${row.original.id}`}> Update</Link>
             </DropdownMenuItem>
             <DropdownMenuItem className="space-x-3">
               <DeleteSongButton song={row.original} />

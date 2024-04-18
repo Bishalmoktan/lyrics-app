@@ -11,9 +11,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Artist, Song } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
-import { Edit, MoreHorizontal, ArrowUpDown, Trash2Icon } from 'lucide-react';
+import { MoreHorizontal, ArrowUpDown } from 'lucide-react';
+import DeleteArtistButton from './_components/delete-artist-button';
+import EditArtistButton from './_components/edit-artist-button';
 
-interface IArtist extends Artist {
+export interface IArtist extends Artist {
   songs: Song[];
 }
 
@@ -65,10 +67,10 @@ export const columns: ColumnDef<IArtist>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="space-x-3">
-              <Edit /> <span> Edit</span>
+              <EditArtistButton artist={row.original} />
             </DropdownMenuItem>
             <DropdownMenuItem className="space-x-3">
-              <Trash2Icon /> <span>Delete</span>
+              <DeleteArtistButton artist={row.original} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -67,9 +67,9 @@ model Song {
   songId    String
   story     String?
 
-  Artist   Artist? @relation(fields: [artistId], references: [id])
+  Artist   Artist? @relation(fields: [artistId], references: [id], onDelete: Cascade)
   artistId String?
-  User     User    @relation(fields: [userId], references: [id])
+  User     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String
 
   Genre Genre[]

@@ -49,7 +49,7 @@ import { Artist, Genre } from '@prisma/client';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { useModal } from '@/hooks/use-modal';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export const formSchema = z.object({
   title: z.string().min(1, {
@@ -79,7 +79,9 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
   const { openModal } = useModal();
   const [thumbnail, setThumbnail] = useState('');
   const [loading, setLoading] = useState(false);
+  const params = useSearchParams();
 
+  console.log(params.get('id'));
   const ReactQuill = useMemo(
     () => dynamic(() => import('react-quill'), { ssr: false }),
     []
