@@ -50,6 +50,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { useModal } from '@/hooks/use-modal';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Preview from '../../_components/preview';
 
 export const formSchema = z.object({
   title: z.string().min(1, {
@@ -80,6 +81,8 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
   const [thumbnail, setThumbnail] = useState('');
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState('');
+  const [showForm, setShowForm] = useState(true);
+
   const params = useSearchParams();
 
   const id = params.get('id') || '';
@@ -138,261 +141,280 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
       setThumbnail('');
     }
   }
+  if (showForm) {
+    return (
+      <Form {...form}>
+        <Button onClick={() => setShowForm(false)}>Preview</Button>
 
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Eg: Najeek"
-                  className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>Enter title of the song.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Eg: Najeek"
+                    className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>Enter title of the song.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* songId */}
-        <FormField
-          control={form.control}
-          name="songId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Song Id</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Eg: qyRrUEInzAs"
-                  className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                You can find it on the song url of youtube.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          {/* songId */}
+          <FormField
+            control={form.control}
+            name="songId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Song Id</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Eg: qyRrUEInzAs"
+                    className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  You can find it on the song url of youtube.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* story */}
-        <FormField
-          control={form.control}
-          name="story"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Song Story</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Eg: This is about situationship"
-                  className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                Note: You can add the story later.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          {/* story */}
+          <FormField
+            control={form.control}
+            name="story"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Song Story</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Eg: This is about situationship"
+                    className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Note: You can add the story later.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* artist  */}
-        <FormField
-          control={form.control}
-          name="artist"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Artist</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        'max-w-sm justify-between bg-white text-gray-900 hover:bg-white hover:text-gray-500',
-                        !field.value && 'text-gray-500'
-                      )}
-                    >
-                      {field.value
-                        ? artists.find((artist) => artist.id === field.value)
-                            ?.name
-                        : 'Select Artist'}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="max-w-sm p-0">
-                  <Command>
-                    <CommandInput placeholder="Search artist..." />
-                    <CommandEmpty>
-                      <span>Artist not found. </span>
-                      <Link
-                        href={'/admin/artists/create'}
-                        className="underline"
+          {/* artist  */}
+          <FormField
+            control={form.control}
+            name="artist"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Artist</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          'max-w-sm justify-between bg-white text-gray-900 hover:bg-white hover:text-gray-500',
+                          !field.value && 'text-gray-500'
+                        )}
                       >
-                        Create Artist
-                      </Link>
-                    </CommandEmpty>
-                    <CommandList>
-                      {artists.map((artist) => (
-                        <CommandItem
-                          value={artist.name}
-                          key={artist.id}
-                          onSelect={() => {
-                            form.setValue('artist', artist.id);
-                          }}
+                        {field.value
+                          ? artists.find((artist) => artist.id === field.value)
+                              ?.name
+                          : 'Select Artist'}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="max-w-sm p-0">
+                    <Command>
+                      <CommandInput placeholder="Search artist..." />
+                      <CommandEmpty>
+                        <span>Artist not found. </span>
+                        <Link
+                          href={'/admin/artists/create'}
+                          className="underline"
                         >
-                          <Check
-                            className={cn(
-                              'mr-2 h-4 w-4',
-                              artist.id === field.value
-                                ? 'opacity-100'
-                                : 'opacity-0'
-                            )}
-                          />
-                          <span> {artist.name}</span>
-                        </CommandItem>
-                      ))}
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormDescription>
-                Select the arist. Artist not found?{' '}
-                <Link
-                  href={'/admin/artists/create'}
-                  className="underline underline-offset-1"
-                >
-                  Create here
-                </Link>
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                          Create Artist
+                        </Link>
+                      </CommandEmpty>
+                      <CommandList>
+                        {artists.map((artist) => (
+                          <CommandItem
+                            value={artist.name}
+                            key={artist.id}
+                            onSelect={() => {
+                              form.setValue('artist', artist.id);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                'mr-2 h-4 w-4',
+                                artist.id === field.value
+                                  ? 'opacity-100'
+                                  : 'opacity-0'
+                              )}
+                            />
+                            <span> {artist.name}</span>
+                          </CommandItem>
+                        ))}
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormDescription>
+                  Select the arist. Artist not found?{' '}
+                  <Link
+                    href={'/admin/artists/create'}
+                    className="underline underline-offset-1"
+                  >
+                    Create here
+                  </Link>
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* genre */}
-        <FormField
-          control={form.control}
-          name="genre"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Genre</FormLabel>
-              <FormControl>
-                <MultiSelector
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  loop={false}
-                  className="max-w-sm justify-between bg-white text-gray-900 hover:bg-white hover:text-gray-500"
-                >
-                  <MultiSelectorTrigger>
-                    <MultiSelectorInput
-                      className="max-w-sm justify-between bg-white text-gray-900 hover:bg-white hover:text-gray-500"
-                      placeholder="Choose the genre of the song"
-                    />
-                  </MultiSelectorTrigger>
-                  <MultiSelectorContent>
-                    <MultiSelectorList>
-                      {genres.map((option, i) => (
-                        <MultiSelectorItem key={i} value={option.name}>
-                          {option.name}
-                        </MultiSelectorItem>
-                      ))}
-                    </MultiSelectorList>
-                  </MultiSelectorContent>
-                </MultiSelector>
-              </FormControl>
-              <FormDescription>
-                Genre not found?
-                <span
-                  className="underline cursor-pointer"
-                  onClick={() => openModal('createGenre')}
-                >
-                  {' '}
-                  Create Genre
-                </span>
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          {/* genre */}
+          <FormField
+            control={form.control}
+            name="genre"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Genre</FormLabel>
+                <FormControl>
+                  <MultiSelector
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    loop={false}
+                    className="max-w-sm justify-between bg-white text-gray-900 hover:bg-white hover:text-gray-500"
+                  >
+                    <MultiSelectorTrigger>
+                      <MultiSelectorInput
+                        className="max-w-sm justify-between bg-white text-gray-900 hover:bg-white hover:text-gray-500"
+                        placeholder="Choose the genre of the song"
+                      />
+                    </MultiSelectorTrigger>
+                    <MultiSelectorContent>
+                      <MultiSelectorList>
+                        {genres.map((option, i) => (
+                          <MultiSelectorItem key={i} value={option.name}>
+                            {option.name}
+                          </MultiSelectorItem>
+                        ))}
+                      </MultiSelectorList>
+                    </MultiSelectorContent>
+                  </MultiSelector>
+                </FormControl>
+                <FormDescription>
+                  Genre not found?
+                  <span
+                    className="underline cursor-pointer"
+                    onClick={() => openModal('createGenre')}
+                  >
+                    {' '}
+                    Create Genre
+                  </span>
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* upload image widget  */}
-        <div>
-          <p>Thumbnail</p>
-          <CldUploadWidget
-            options={{
-              folder: 'thumbnails',
-            }}
-            signatureEndpoint={'/api/sign-cloudinary-params'}
-            onSuccess={(result) => {
-              const info = result.info as CloudinaryUploadWidgetInfo;
-              setThumbnail(info.secure_url);
-            }}
+          {/* upload image widget  */}
+          <div>
+            <p>Thumbnail</p>
+            <CldUploadWidget
+              options={{
+                folder: 'thumbnails',
+              }}
+              signatureEndpoint={'/api/sign-cloudinary-params'}
+              onSuccess={(result) => {
+                const info = result.info as CloudinaryUploadWidgetInfo;
+                setThumbnail(info.secure_url);
+              }}
+            >
+              {({ open }) => {
+                return (
+                  <div
+                    onClick={() => open()}
+                    className="cursor-pointer text-gray-300"
+                  >
+                    <Upload className="size-16" />
+                    <p>Upload image</p>
+                  </div>
+                );
+              }}
+            </CldUploadWidget>
+
+            {thumbnail !== '' && (
+              <Image
+                src={thumbnail}
+                alt="Preview Image"
+                height={'400'}
+                width={'600'}
+              />
+            )}
+          </div>
+
+          {/* lyrics */}
+          <FormField
+            control={form.control}
+            name="lyrics"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Lyrics</FormLabel>
+                <FormControl>
+                  <ReactQuill
+                    className="bg-white max-w-lg text-gray-900"
+                    theme="snow"
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Eg: Najeek na aau..."
+                  />
+                </FormControl>
+                <FormDescription>Enter lyrics of the song.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button
+            disabled={loading}
+            type="submit"
+            className="bg-rose-500 hover:bg-rose-700 text-white hover:text-white"
           >
-            {({ open }) => {
-              return (
-                <div
-                  onClick={() => open()}
-                  className="cursor-pointer text-gray-300"
-                >
-                  <Upload className="size-16" />
-                  <p>Upload image</p>
-                </div>
-              );
-            }}
-          </CldUploadWidget>
-
-          {thumbnail !== '' && (
-            <Image
-              src={thumbnail}
-              alt="Preview Image"
-              height={'400'}
-              width={'600'}
-            />
-          )}
-        </div>
-
-        {/* lyrics */}
-        <FormField
-          control={form.control}
-          name="lyrics"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Lyrics</FormLabel>
-              <FormControl>
-                <ReactQuill
-                  className="bg-white max-w-lg text-gray-900"
-                  theme="snow"
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Eg: Najeek na aau..."
-                />
-              </FormControl>
-              <FormDescription>Enter lyrics of the song.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+            Update
+          </Button>
+        </form>
+      </Form>
+    );
+  } else {
+    return (
+      <div>
+        <Button onClick={() => setShowForm(true)}>Show Form</Button>
+        <Preview
+          artist={form.getValues('artist')}
+          genre={form.getValues('genre')}
+          lyrics={form.getValues('lyrics')}
+          songId={form.getValues('songId')}
+          story={form.getValues('story')}
+          title={form.getValues('title')}
+          thumbnail={thumbnail}
+          artists={artists}
         />
-
-        <Button
-          disabled={loading}
-          type="submit"
-          className="bg-rose-500 hover:bg-rose-700 text-white hover:text-white"
-        >
-          Update
-        </Button>
-      </form>
-    </Form>
-  );
+      </div>
+    );
+  }
 }

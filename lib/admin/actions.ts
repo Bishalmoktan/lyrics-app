@@ -190,6 +190,24 @@ export const getAllArtist = async () => {
 };
 
 /**
+ * A server action that returns all the artists
+ * Doesn't take any parameter
+ */
+export const getArtistById = async (id: string) => {
+  try {
+    const res = await db.artist.findUnique({
+      where: {
+        id,
+      },
+    });
+    return res;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+};
+
+/**
  * A server action that returns all the genre
  * Doesn't take any parameter
  */

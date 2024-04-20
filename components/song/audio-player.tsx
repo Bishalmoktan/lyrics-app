@@ -4,7 +4,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import YouTube from 'react-youtube';
 import { Button } from '../ui/button';
 
-const CustomMusicPlayer: React.FC = () => {
+const CustomMusicPlayer: React.FC<{ songId: string }> = ({ songId }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -70,10 +70,10 @@ const CustomMusicPlayer: React.FC = () => {
         step={1}
         onChange={handleProgressChange}
       />
-      <div>
+      <div className="bg-rose-500 bg-opacity-60 rounded-t-md p-2">
         {formatTime(currentTime)} / {formatTime(duration)}
       </div>
-      <div className="flex gap-2 justify-center items-center">
+      <div className="flex gap-2 justify-center items-center bg-rose-500 bg-opacity-60 rounded-b-md pb-2">
         <div className="flex flex-col gap-1 items-center">
           <Button className="rounded-full p-2" onClick={() => handleSkip(-10)}>
             <IterationCcw className="-rotate-180 size-4 md:size-6 cursor-pointer" />
@@ -99,7 +99,7 @@ const CustomMusicPlayer: React.FC = () => {
 
       <div className="hidden">
         <YouTube
-          videoId="qyRrUEInzAs"
+          videoId={songId}
           opts={{ playerVars: { controls: 1 } }}
           onReady={handleReady}
           onStateChange={handleStateChange}
