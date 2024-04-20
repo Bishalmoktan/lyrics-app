@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { CldUploadWidget, CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 
@@ -42,7 +42,7 @@ import {
 } from '@/components/ui/multi-select';
 
 import 'react-quill/dist/quill.snow.css';
-import { postSong } from '@/lib/actions';
+import { getSongDetail, postSong, updateSong } from '@/lib/admin/actions';
 import Image from 'next/image';
 import { Textarea } from '@/components/ui/textarea';
 import { Artist, Genre } from '@prisma/client';
@@ -70,18 +70,20 @@ export const formSchema = z.object({
   }),
 });
 
-interface AddSongFormProps {
+interface UpdateSongFormProps {
   artists: Artist[];
   genres: Genre[];
 }
 
-export function AddSongForm({ artists, genres }: AddSongFormProps) {
+export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
   const { openModal } = useModal();
   const [thumbnail, setThumbnail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState('');
   const params = useSearchParams();
 
-  console.log(params.get('id'));
+  const id = params.get('id') || '';
+
   const ReactQuill = useMemo(
     () => dynamic(() => import('react-quill'), { ssr: false }),
     []
@@ -97,6 +99,25 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
       genre: [],
     },
   });
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const res = await getSongDetail(id);
+        form.setValue('artist', res?.Artist?.id || '');
+        form.setValue('title', res?.title || '');
+        form.setValue('lyrics', res?.lyrics || '');
+        form.setValue('songId', res?.songId || '');
+        form.setValue('story', res?.story || '');
+        const genres = res?.Genre.map((genre) => genre.name);
+        form.setValue('genre', genres || []);
+        setThumbnail(res?.thumbnail || '');
+        setUserId(res?.userId || '');
+      } catch (error: any) {
+        console.log(error.message);
+      }
+    };
+    getData();
+  }, []);
   const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -106,7 +127,7 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
     }
     setLoading(true);
     try {
-      const res = await postSong({ thumbnail, ...values });
+      const res = await updateSong({ userId, id, thumbnail, ...values });
       toast.success(res?.msg);
       router.refresh();
     } catch (error: any) {
@@ -369,7 +390,7 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
           type="submit"
           className="bg-rose-500 hover:bg-rose-700 text-white hover:text-white"
         >
-          Publish
+          Update
         </Button>
       </form>
     </Form>

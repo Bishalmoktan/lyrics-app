@@ -3,7 +3,7 @@
 import { formSchema } from '@/app/(admin)/admin/songs/create/_components/form';
 import { formSchema as artistFormSchema } from '@/app/(admin)/admin/artists/create/_components/form';
 import { z } from 'zod';
-import { db } from './db';
+import { db } from '../db';
 import { auth } from '@/auth';
 import { Song } from '@/app/(admin)/admin/songs/columns';
 
@@ -11,6 +11,8 @@ type postSongData = z.infer<typeof formSchema>;
 
 interface IPostSongData extends postSongData {
   thumbnail: string;
+  id?: string;
+  userId?: string;
 }
 
 /**
@@ -53,6 +55,50 @@ export const postSong = async (data: IPostSongData) => {
 
     return {
       msg: 'Song added successfully!',
+    };
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
+/**
+ * A server action to update a new lyrics of a song
+ * Takes a song data as parameter
+ * @type {IPostSongData[]}
+ */
+export const updateSong = async (data: IPostSongData) => {
+  const { artist, genre, songId, lyrics, story, thumbnail, title, id, userId } =
+    data;
+  try {
+    const session = await auth();
+    if (!session) {
+      throw new Error('Unauthorized');
+    }
+
+    if (!userId || userId === '') {
+      throw new Error('User id missing');
+    }
+
+    await db.song.update({
+      where: {
+        id: id,
+      },
+      data: {
+        lyrics,
+        artistId: artist,
+        songId,
+        thumbnail,
+        title,
+        userId,
+        story,
+        Genre: {
+          connect: genre.map((name) => ({ name })),
+        },
+      },
+    });
+
+    return {
+      msg: 'Song updated successfully!',
     };
   } catch (error: any) {
     throw new Error(error.message);
@@ -200,13 +246,25 @@ export const getAllSongs = async () => {
 };
 /**
  * A server action that returns all the songs
- * Doesn't take any parameter
+ * Takes id as a parameter @type {string}
  */
 export const getSongDetail = async (id: string) => {
   try {
     const res = await db.song.findUnique({
       where: {
         id,
+      },
+      select: {
+        id: true,
+        Artist: true,
+        title: true,
+        User: true,
+        Genre: true,
+        lyrics: true,
+        story: true,
+        songId: true,
+        thumbnail: true,
+        userId: true,
       },
     });
     return res;

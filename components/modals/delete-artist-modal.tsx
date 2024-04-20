@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useModal } from '@/hooks/use-modal';
-import { deleteArtist } from '@/lib/modal-actions';
+import { deleteArtist } from '@/lib/admin/modal-actions';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';

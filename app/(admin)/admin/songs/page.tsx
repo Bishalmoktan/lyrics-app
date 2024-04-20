@@ -1,7 +1,7 @@
 import { DataTable } from '@/components/data-table';
 import { Separator } from '@/components/ui/separator';
 import { columns } from './columns';
-import { getAllSongs } from '@/lib/actions';
+import { getAllSongs } from '@/lib/admin/actions';
 
 const AdminSongsPage = async () => {
   const data = await getAllSongs();

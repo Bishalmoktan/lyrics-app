@@ -12,7 +12,7 @@ import { useModal } from '@/hooks/use-modal';
 import { UserRole } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { updateArtist, updateUser } from '@/lib/modal-actions';
+import { updateArtist, updateUser } from '@/lib/admin/modal-actions';
 import { useRouter } from 'next/navigation';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';

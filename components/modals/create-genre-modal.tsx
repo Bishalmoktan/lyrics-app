@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useModal } from '@/hooks/use-modal';
-import { createGenre } from '@/lib/actions';
+import { createGenre } from '@/lib/admin/actions';
 import { useState } from 'react';
 import { toast } from 'sonner';
 

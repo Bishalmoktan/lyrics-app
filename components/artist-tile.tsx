@@ -3,7 +3,7 @@ import Image, { StaticImageData } from 'next/image';
 interface ArtistTitleProps {
   name: string;
   designation: string;
-  pic: StaticImageData;
+  pic: string;
 }
 
 const ArtistTile = ({ artist }: { artist: ArtistTitleProps }) => {
@@ -11,6 +11,8 @@ const ArtistTile = ({ artist }: { artist: ArtistTitleProps }) => {
     <div className="flex gap-8 cursor-pointer items-center">
       <Image
         src={artist.pic}
+        width={300}
+        height={300}
         alt={artist.name}
         className="size-20 rounded-full"
       />

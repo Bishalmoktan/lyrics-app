@@ -7,14 +7,27 @@ import { ReadMore } from './read-more';
 import CommentSection from './comment-section';
 import Songs from '../songs';
 import CustomMusicPlayer from './audio-player';
+import { ISongDetail } from '@/lib/public-actions/actions';
 
-const SongSection = () => {
+const SongSection = ({
+  Artist,
+  Genre,
+  User,
+  artistId,
+  lyrics,
+  songId,
+  story,
+  thumbnail,
+  title,
+}: ISongDetail) => {
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="relative h-full md:h-[50vh]">
           <Image
             src={thumbnail}
+            width={'600'}
+            height={'300'}
             className="w-full h-full object-cover rounded-md"
             alt="Song title.."
           />
@@ -23,7 +36,7 @@ const SongSection = () => {
           </div>
         </div>
         <div>
-          <LyricsContainer />
+          <LyricsContainer englishLyrics={lyrics} />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -31,9 +44,9 @@ const SongSection = () => {
           <div className="space-y-6">
             <ArtistTile
               artist={{
-                designation: 'Singer, Songwriter',
-                name: 'Samir Shrestha',
-                pic: artist,
+                designation: Artist.designation,
+                name: Artist.name,
+                pic: Artist.avatar_url,
               }}
             />
             <div>

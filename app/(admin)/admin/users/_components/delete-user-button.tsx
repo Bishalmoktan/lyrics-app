@@ -3,7 +3,7 @@ import { useModal } from '@/hooks/use-modal';
 import { Trash2Icon } from 'lucide-react';
 import { IUser } from '../columns';
 import { useEffect, useState } from 'react';
-import { getCurrentUser } from '@/lib/actions';
+import { getCurrentUser } from '@/lib/admin/actions';
 import { Session } from 'next-auth';
 
 const DeleteUserButton = ({ user }: { user: IUser }) => {

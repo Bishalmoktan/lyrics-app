@@ -1,6 +1,6 @@
 import { Separator } from '@/components/ui/separator';
 import { AddSongForm } from './_components/form';
-import { getAllArtist, getAllGenre } from '@/lib/actions';
+import { getAllArtist, getAllGenre } from '@/lib/admin/actions';
 
 const AdminAddSongPage = async () => {
   const artists = await getAllArtist();

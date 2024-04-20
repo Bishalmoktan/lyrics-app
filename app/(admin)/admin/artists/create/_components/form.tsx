@@ -21,7 +21,7 @@ import { Upload } from 'lucide-react';
 
 import 'react-quill/dist/quill.snow.css';
 import Image from 'next/image';
-import { createArtist } from '@/lib/actions';
+import { createArtist } from '@/lib/admin/actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 

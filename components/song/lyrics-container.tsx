@@ -4,7 +4,7 @@ import { ScrollArea } from '../ui/scroll-area';
 import EnglishLyrics from './english-lyrics';
 import NepaliLyrics from './nepali-lyrics';
 
-const LyricsContainer = () => {
+const LyricsContainer = ({ englishLyrics }: { englishLyrics: string }) => {
   return (
     <Tabs defaultValue="english" className="">
       <TabsList className="mx-auto w-full bg-transparent ">
@@ -18,7 +18,7 @@ const LyricsContainer = () => {
       <Separator className="bg-zinc-200" />
       <TabsContent value="english" className="text-center text-xl">
         <ScrollArea className="h-[40vh] py-3">
-          <EnglishLyrics />
+          <EnglishLyrics lyrics={englishLyrics} />
         </ScrollArea>
       </TabsContent>
       <TabsContent value="nepali" className="text-center text-xl">

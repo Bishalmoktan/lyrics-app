@@ -9,8 +9,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useModal } from '@/hooks/use-modal';
-import { getCurrentUser } from '@/lib/actions';
-import { deleteUser } from '@/lib/modal-actions';
+import { getCurrentUser } from '@/lib/admin/actions';
+import { deleteUser } from '@/lib/admin/modal-actions';
 import { UserRole } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

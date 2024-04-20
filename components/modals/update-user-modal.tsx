@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { updateUser } from '@/lib/modal-actions';
+import { updateUser } from '@/lib/admin/modal-actions';
 import { useRouter } from 'next/navigation';
 
 const UpdateUserModal = () => {

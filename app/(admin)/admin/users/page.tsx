@@ -1,7 +1,7 @@
 import { DataTable } from '@/components/data-table';
 import { Separator } from '@/components/ui/separator';
 import { columns } from './columns';
-import { getAllUsers } from '@/lib/actions';
+import { getAllUsers } from '@/lib/admin/actions';
 
 const getData = async () => {
   const res = await getAllUsers();
