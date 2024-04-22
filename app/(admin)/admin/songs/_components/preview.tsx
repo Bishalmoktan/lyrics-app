@@ -24,6 +24,8 @@ const Preview = ({
   lyrics,
   thumbnail,
   artists,
+  nepaliLyrics,
+  duration,
 }: IPreviewType) => {
   let artist: Artist | null = null;
   for (let a of artists) {
@@ -52,7 +54,7 @@ const Preview = ({
           </div>
         </div>
         <div>
-          <LyricsContainer englishLyrics={lyrics} />
+          <LyricsContainer englishLyrics={lyrics} nepaliLyrics={nepaliLyrics} />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

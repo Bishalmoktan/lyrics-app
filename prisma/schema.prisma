@@ -24,6 +24,7 @@ model User {
   image         String?
   accounts      Account[]
   songs         Song[]
+  comments      Comment[]
 }
 
 model Account {
@@ -60,17 +61,32 @@ model Genre {
 }
 
 model Song {
-  id        String  @id @default(cuid())
-  thumbnail String
-  lyrics    String
-  title     String
-  songId    String
-  story     String?
+  id           String  @id @default(cuid())
+  thumbnail    String
+  lyrics       String
+  title        String
+  songId       String
+  duration     String
+  story        String?
+  nepaliLyrics String?
 
   Artist   Artist? @relation(fields: [artistId], references: [id], onDelete: Cascade)
   artistId String?
   User     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String
 
-  Genre Genre[]
+  genres   Genre[]
+  comments Comment[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  song   Song   @relation(fields: [songId], references: [id], onDelete: Cascade)
+  songId String
 }

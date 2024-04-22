@@ -2,6 +2,10 @@
 
 import { db } from '@/lib/db';
 
+/**
+ * A server action that return the current by id
+ * Takes id as a parameter @type {string}
+ */
 export const getUserById = async (userId: string) => {
   try {
     const user = await db.user.findUnique({

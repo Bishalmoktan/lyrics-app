@@ -9,7 +9,7 @@ interface songTileProps extends Song {
 const SongTile = ({ song }: { song: songTileProps }) => {
   return (
     <Link
-      href={`songs/${song.id}`}
+      href={`/songs/${song.id}`}
       className="flex gap-8 cursor-pointer items-center"
     >
       <Image
@@ -23,8 +23,7 @@ const SongTile = ({ song }: { song: songTileProps }) => {
         <h4 className="text-lg md:text-2xl">{song.title}</h4>
         <p className="text-zinc-300">{song.Artist.name}</p>
       </div>
-      {/* TODO: ADD DURTION ON SCHEMA  */}
-      <div className="text-zinc-300">4:18</div>
+      <div className="text-zinc-300">{song.duration}</div>
     </Link>
   );
 };

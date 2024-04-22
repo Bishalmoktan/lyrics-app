@@ -59,6 +59,9 @@ export const formSchema = z.object({
   songId: z.string().min(1, {
     message: 'Song id is required.',
   }),
+  duration: z.string().min(1, {
+    message: 'Duration cannot be empty.',
+  }),
   story: z.string(),
   artist: z.string().min(1, {
     message: 'Please select an Artist.',
@@ -69,6 +72,7 @@ export const formSchema = z.object({
   lyrics: z.string().min(1, {
     message: 'Lyrics cannot be empty',
   }),
+  nepaliLyrics: z.string(),
 });
 
 interface AddSongFormProps {
@@ -91,9 +95,11 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
     defaultValues: {
       title: '',
       artist: '',
+      duration: '',
       songId: '',
       lyrics: '',
       story: '',
+      nepaliLyrics: '',
       genre: [],
     },
   });
@@ -157,6 +163,28 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
                 </FormControl>
                 <FormDescription>
                   You can find it on the song url of youtube.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* duration */}
+          <FormField
+            control={form.control}
+            name="duration"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Duration</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Eg: 4:18"
+                    className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  You can find duration of the song in youtube.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -365,6 +393,30 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
             )}
           />
 
+          {/* nepali lyrics  */}
+          <FormField
+            control={form.control}
+            name="nepaliLyrics"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nepali Lyrics</FormLabel>
+                <FormControl>
+                  <ReactQuill
+                    className="bg-white max-w-lg text-gray-900"
+                    theme="snow"
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Eg: नजिक नआउ.… "
+                  />
+                </FormControl>
+                <FormDescription>
+                  You can add nepali lyrics later. Note: This is optional
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <Button
             disabled={loading}
             type="submit"
@@ -386,6 +438,8 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
           songId={form.getValues('songId')}
           story={form.getValues('story')}
           title={form.getValues('title')}
+          nepaliLyrics={form.getValues('nepaliLyrics')}
+          duration={form.getValues('duration')}
           thumbnail={thumbnail}
           artists={artists}
         />

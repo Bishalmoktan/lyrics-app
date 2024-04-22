@@ -17,6 +17,10 @@ export const ReadMore = ({ id, text, amountOfWords = 36 }: ReadMoreProps) => {
     : text;
   const endText = splittedText.slice(amountOfWords - 1).join(' ');
 
+  if (text === '') {
+    return <p>We will soon add the story of this song.</p>;
+  }
+
   return (
     <p id={id}>
       {beginText}

@@ -6,18 +6,17 @@ import CommentSection from './comment-section';
 import Songs from '../songs';
 import CustomMusicPlayer from './audio-player';
 import { ISongDetail } from '@/lib/public-actions/actions';
+import { getCurrentUser } from '@/lib/admin/actions';
 
-const SongSection = ({
+const SongSection = async ({
   Artist,
-  Genre,
-  User,
-  artistId,
   lyrics,
   songId,
   story,
   thumbnail,
-  title,
+  nepaliLyrics,
 }: ISongDetail) => {
+  const session = await getCurrentUser();
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -34,7 +33,10 @@ const SongSection = ({
           </div>
         </div>
         <div>
-          <LyricsContainer englishLyrics={lyrics} />
+          <LyricsContainer
+            englishLyrics={lyrics}
+            nepaliLyrics={nepaliLyrics || ''}
+          />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -53,7 +55,7 @@ const SongSection = ({
               <ReadMore id="12" text={story || ''} />
             </div>
             <div>
-              <CommentSection />
+              <CommentSection session={session} />
             </div>
           </div>
         </div>

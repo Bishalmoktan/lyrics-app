@@ -21,7 +21,17 @@ interface IPostSongData extends postSongData {
  * @type {IPostSongData[]}
  */
 export const postSong = async (data: IPostSongData) => {
-  const { artist, genre, songId, lyrics, story, thumbnail, title } = data;
+  const {
+    artist,
+    genre,
+    songId,
+    lyrics,
+    story,
+    thumbnail,
+    title,
+    nepaliLyrics,
+    duration,
+  } = data;
   try {
     const session = await auth();
     if (!session) {
@@ -47,7 +57,9 @@ export const postSong = async (data: IPostSongData) => {
         title,
         userId: session.user.id!,
         story,
-        Genre: {
+        nepaliLyrics,
+        duration,
+        genres: {
           connect: genre.map((name) => ({ name })),
         },
       },
@@ -91,8 +103,8 @@ export const updateSong = async (data: IPostSongData) => {
         title,
         userId,
         story,
-        Genre: {
-          connect: genre.map((name) => ({ name })),
+        genres: {
+          set: genre.map((name) => ({ name })),
         },
       },
     });
@@ -242,6 +254,7 @@ export const getAllUsers = async () => {
     throw new Error('Error getting the users');
   }
 };
+
 /**
  * A server action that returns all the songs
  * Doesn't take any parameter
@@ -277,7 +290,7 @@ export const getSongDetail = async (id: string) => {
         Artist: true,
         title: true,
         User: true,
-        Genre: true,
+        genres: true,
         lyrics: true,
         story: true,
         songId: true,

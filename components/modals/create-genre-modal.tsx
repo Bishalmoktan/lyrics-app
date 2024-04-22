@@ -11,6 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useModal } from '@/hooks/use-modal';
 import { createGenre } from '@/lib/admin/actions';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -19,6 +20,7 @@ const CreateGenreModal = () => {
   const isModalOpen = isOpen && type === 'createGenre';
   const [genre, setGenre] = useState('');
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const handleSave = async () => {
     if (genre === '') {
       toast.error('Genre cannot be empty!');
@@ -28,6 +30,7 @@ const CreateGenreModal = () => {
       setLoading(true);
       const res = await createGenre(genre);
       toast.success(res.msg);
+      router.refresh();
     } catch (error: any) {
       toast.error(error.message);
     } finally {
