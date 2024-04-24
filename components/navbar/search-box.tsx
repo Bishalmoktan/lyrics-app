@@ -1,6 +1,9 @@
 'use client';
 import { Search } from 'lucide-react';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
+
 import {
+  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -9,11 +12,58 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components//ui/command';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollArea } from '../ui/scroll-area';
+import {
+  searchArtistByName,
+  searchSongsByName,
+} from '@/lib/public-actions/actions';
+import { Artist } from '@prisma/client';
+import SongTile, { songTileProps } from '../song-tile';
+import Link from 'next/link';
+import { categories } from '@/data/categorires';
+import Image from 'next/image';
+import ArtistTile from '../artist-tile';
 
 const SearchBox = () => {
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [songs, setSongs] = useState<songTileProps[] | []>([]);
+  const [artists, setArtists] = useState<Artist[] | []>([]);
+  const path = usePathname();
+  const params = useSearchParams();
+  const type = params.get('type');
+  const artistId = params.get('artistId');
+  useEffect(() => {
+    setOpen(false);
+  }, [path, type, artistId]);
+  useEffect(() => {
+    setLoading(true);
+    const debounceTimer = setTimeout(async () => {
+      try {
+        if (searchTerm.trim() === '') {
+          setSongs([]);
+          setArtists([]);
+          return;
+        }
+
+        const resultSongs = await searchSongsByName(searchTerm);
+        const resultArtists = await searchArtistByName(searchTerm);
+        setSongs(resultSongs);
+        setArtists(resultArtists);
+      } catch (error) {
+        console.error('Error searching songs:', error);
+      } finally {
+        setLoading(false);
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(debounceTimer);
+    };
+  }, [searchTerm]);
+
   return (
     <>
       <button
@@ -25,27 +75,75 @@ const SearchBox = () => {
         </p>
         <Search className="w-4 h-4 text-zinc-500 dark:text-zinc-200" />
       </button>
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
-        <ScrollArea className="border-1 border-black rounded-md">
-          <CommandList>
-            <CommandEmpty className="dark:text-zinc-200">
-              No results found.
-            </CommandEmpty>
-            <CommandGroup heading="Category">
-              <CommandItem>Pop</CommandItem>
-              <CommandItem>Rock</CommandItem>
-              <CommandItem>Lofi</CommandItem>
-            </CommandGroup>
-            <CommandSeparator className=" bg-zinc-200 mb-1" />
-            <CommandGroup heading="Song">
-              <CommandItem>Suna</CommandItem>
-              <CommandItem>Rock</CommandItem>
-              <CommandItem>Lofi</CommandItem>
-            </CommandGroup>
-          </CommandList>
-        </ScrollArea>
-      </CommandDialog>
+      <Command shouldFilter={false}>
+        <CommandDialog open={open} onOpenChange={setOpen}>
+          <CommandInput
+            value={searchTerm}
+            onValueChange={setSearchTerm}
+            placeholder="Search a song or artist or genre..."
+          />
+          <ScrollArea className="border-1 border-black rounded-md">
+            <CommandList>
+              {songs.length > 0 && (
+                <>
+                  <CommandGroup heading="Song">
+                    {songs.map((song) => {
+                      return (
+                        <CommandItem key={song.id} value={song.title}>
+                          <SongTile song={song} />
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
+
+                  <CommandSeparator className=" bg-zinc-200 mb-1" />
+                </>
+              )}
+
+              {artists.length > 0 && (
+                <>
+                  <CommandGroup heading="Artist">
+                    {artists.map((artist) => {
+                      return (
+                        <CommandItem key={artist.id} value={artist.name}>
+                          <ArtistTile artist={artist} />
+                        </CommandItem>
+                      );
+                    })}
+                  </CommandGroup>
+                  <CommandSeparator className=" bg-zinc-200 mb-1" />
+                </>
+              )}
+
+              {/* genre or category  */}
+              <CommandGroup heading="Category">
+                {categories.map((category, index) => (
+                  <CommandItem key={index}>
+                    <Link
+                      href={`/search?type=${category.label}`}
+                      className={`p-4 ${category.bg} bg-opacity-20 rounded-md flex gap-4 justify-center items-center`}
+                    >
+                      <Image
+                        src={category.src}
+                        alt={category.label}
+                        className="size-10 object-contain"
+                      />
+
+                      <p className="text-lg"> {category.label} </p>
+                    </Link>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+
+              {!loading ? (
+                <CommandEmpty>No results found.</CommandEmpty>
+              ) : (
+                <CommandEmpty>Searching...</CommandEmpty>
+              )}
+            </CommandList>
+          </ScrollArea>
+        </CommandDialog>
+      </Command>
     </>
   );
 };

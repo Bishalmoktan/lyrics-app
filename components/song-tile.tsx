@@ -2,7 +2,7 @@ import { Artist, Song } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
 
-interface songTileProps extends Song {
+export interface songTileProps extends Song {
   Artist: Artist;
 }
 

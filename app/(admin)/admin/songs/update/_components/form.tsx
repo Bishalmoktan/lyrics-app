@@ -42,7 +42,7 @@ import {
 } from '@/components/ui/multi-select';
 
 import 'react-quill/dist/quill.snow.css';
-import { getSongDetail, postSong, updateSong } from '@/lib/admin/actions';
+import { getSongDetail, updateSong } from '@/lib/admin/actions';
 import Image from 'next/image';
 import { Textarea } from '@/components/ui/textarea';
 import { Artist, Genre } from '@prisma/client';

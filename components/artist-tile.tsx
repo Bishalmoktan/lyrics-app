@@ -1,9 +1,13 @@
 import { Artist } from '@prisma/client';
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const ArtistTile = ({ artist }: { artist: Artist }) => {
   return (
-    <div className="flex gap-8 cursor-pointer items-center">
+    <Link
+      href={`/search?artistId=${artist.id}`}
+      className="flex gap-8 cursor-pointer items-center"
+    >
       <Image
         src={artist.avatar_url}
         width={300}
@@ -15,7 +19,7 @@ const ArtistTile = ({ artist }: { artist: Artist }) => {
         <h4 className="text-lg font-bold md:text-2xl">{artist.name}</h4>
         <p className="text-zinc-300">{artist.designation}</p>
       </div>
-    </div>
+    </Link>
   );
 };
 export default ArtistTile;

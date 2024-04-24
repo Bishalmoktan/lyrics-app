@@ -142,3 +142,94 @@ export const deleteComment = async (id: string, userId: string) => {
     throw new Error(error.message);
   }
 };
+
+/**
+ * A server action to get song by genre
+ */
+export const getSongsByGenre = async (genre: string) => {
+  try {
+    const song = await db.song.findMany({
+      where: {
+        genres: {
+          some: {
+            name: genre,
+          },
+        },
+      },
+      include: {
+        Artist: true,
+      },
+    });
+
+    return song as songTileProps[];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+};
+
+/**
+ * A server action to get song by artist
+ */
+export const getSongsByArtist = async (artistId: string) => {
+  try {
+    const song = await db.song.findMany({
+      where: {
+        artistId,
+      },
+      include: {
+        Artist: true,
+      },
+    });
+
+    return song as songTileProps[];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+};
+
+/**
+ * A server action to search song by name or lyrics
+ */
+export const searchSongsByName = async (query: string) => {
+  try {
+    const results = await db.song.findMany({
+      take: 20,
+      where: {
+        OR: [
+          { title: { contains: query, mode: 'insensitive' } },
+          { lyrics: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+      include: {
+        Artist: true,
+      },
+    });
+    return results as songTileProps[];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+};
+
+/**
+ * A server action to search song by artist name
+ */
+export const searchArtistByName = async (query: string) => {
+  try {
+    const results = await db.artist.findMany({
+      take: 20,
+      where: {
+        name: {
+          contains: query,
+          mode: 'insensitive',
+        },
+      },
+    });
+    return results;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+};
