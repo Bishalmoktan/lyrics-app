@@ -27,6 +27,45 @@ export const getAllSongs = async () => {
 };
 
 /**
+ * Server action to get all the songs
+ * @returns {songTileProps[]}
+ */
+export const getFeaturedSongs = async () => {
+  try {
+    const res = await db.song.findMany({
+      where: {
+        isFeatured: true,
+      },
+      include: {
+        Artist: true,
+      },
+    });
+    return res as songTileProps[];
+  } catch (error) {
+    console.log(error);
+    throw new Error('Error getting the songs');
+  }
+};
+
+/**
+ * Server action to get all the songs
+ * @returns {Artist[]}
+ */
+export const getFeaturedArtists = async () => {
+  try {
+    const res = await db.artist.findMany({
+      where: {
+        isFeatured: true,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+    throw new Error('Error getting the artists');
+  }
+};
+
+/**
  * A server action that returns all the songs
  * Takes id as a parameter @type {string}
  */

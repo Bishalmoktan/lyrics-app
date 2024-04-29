@@ -1,7 +1,7 @@
 'use server';
 
 import { formSchema } from '@/app/(admin)/admin/songs/create/_components/form';
-import { formSchema as artistFormSchema } from '@/app/(admin)/admin/artists/create/_components/form';
+import { formSchema as artistFormSchema } from '@/app/(admin)/admin/artists/_components/form';
 import { z } from 'zod';
 import { db } from '../db';
 import { auth } from '@/auth';
@@ -154,16 +154,23 @@ export const createArtist = async (data: ICreateArtistData) => {
   }
 };
 
+export interface ICreateGenre {
+  name: string;
+  image: string;
+  background: string;
+}
+
 /**
  * A server actions to create a new genre
  * Takes an genre name as parameter
  * @type {string}
  */
-export const createGenre = async (data: string) => {
+export const createGenre = async (data: ICreateGenre) => {
   try {
+    const { background, name, image } = data;
     const genre = await db.genre.findUnique({
       where: {
-        name: data,
+        name,
       },
     });
     if (genre) {
@@ -171,7 +178,9 @@ export const createGenre = async (data: string) => {
     }
     await db.genre.create({
       data: {
-        name: data,
+        name,
+        backgroundColor: background,
+        image,
       },
     });
     return {
@@ -213,6 +222,47 @@ export const getArtistById = async (id: string) => {
       },
     });
     return res;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+};
+
+export interface IUpdatedArtist {
+  name: string;
+  avatar_url: string;
+  designation: string;
+}
+
+/**
+ * Updates Artist
+ * @param data @type {IArtist}
+ * @returns @type {string}
+ */
+export const updateArtist = async (
+  artistId: string,
+  updatedData: IUpdatedArtist
+) => {
+  const { avatar_url, designation, name } = updatedData;
+  try {
+    const session = await getCurrentUser();
+    if (session?.user.role === 'USER') {
+      throw new Error('You cannot perform this action');
+    }
+
+    const artist = await db.artist.update({
+      where: {
+        id: artistId,
+      },
+      data: {
+        avatar_url,
+        designation,
+        name,
+      },
+    });
+    return {
+      msg: `${artist.name} is successfully updated`,
+    };
   } catch (error: any) {
     console.log(error);
     throw new Error(error.message);
@@ -267,6 +317,7 @@ export const getAllSongs = async () => {
         Artist: true,
         title: true,
         User: true,
+        isFeatured: true,
       },
     });
     return res as Song[];

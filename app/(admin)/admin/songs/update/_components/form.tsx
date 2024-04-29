@@ -48,7 +48,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Artist, Genre } from '@prisma/client';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { useModal } from '@/hooks/use-modal';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Preview from '../../_components/preview';
 
@@ -81,7 +80,6 @@ interface UpdateSongFormProps {
 }
 
 export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
-  const { openModal } = useModal();
   const [thumbnail, setThumbnail] = useState('');
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState('');
@@ -346,13 +344,13 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
                 </FormControl>
                 <FormDescription>
                   Genre not found?
-                  <span
+                  <Link
                     className="underline cursor-pointer"
-                    onClick={() => openModal('createGenre')}
+                    href={'/admin/genre/create'}
                   >
                     {' '}
                     Create Genre
-                  </span>
+                  </Link>
                 </FormDescription>
                 <FormMessage />
               </FormItem>

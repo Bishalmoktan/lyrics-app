@@ -17,7 +17,7 @@ const AdminUsersPage = async () => {
         <p className="text-zinc-500">Here are the lists of users!</p>
       </div>
       <Separator className="bg-zinc-300" />
-      <DataTable columns={columns} data={data} placeholder="users" />
+      <DataTable filterBy='email' columns={columns} data={data} placeholder="users" />
     </div>
   );
 };

@@ -48,7 +48,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Artist, Genre } from '@prisma/client';
 import Link from 'next/link';
 import { toast } from 'sonner';
-import { useModal } from '@/hooks/use-modal';
 import { useRouter } from 'next/navigation';
 import Preview from '../../_components/preview';
 
@@ -81,7 +80,6 @@ interface AddSongFormProps {
 }
 
 export function AddSongForm({ artists, genres }: AddSongFormProps) {
-  const { openModal } = useModal();
   const [thumbnail, setThumbnail] = useState('');
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(true);
@@ -127,7 +125,11 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
     return (
       <Form {...form}>
         <Button onClick={() => setShowForm(false)}>Preview</Button>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8"
+          autoComplete="off"
+        >
           <FormField
             control={form.control}
             name="title"
@@ -276,11 +278,8 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
                   </PopoverContent>
                 </Popover>
                 <FormDescription>
-                  Select the arist. Artist not found?{' '}
-                  <Link
-                    href={'/admin/artists/create'}
-                    className="underline underline-offset-1"
-                  >
+                  <span>Select the arist. Artist not found? </span>
+                  <Link href={'/admin/artists/create'} className="underline">
                     Create here
                   </Link>
                 </FormDescription>
@@ -321,14 +320,13 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
                   </MultiSelector>
                 </FormControl>
                 <FormDescription>
-                  Genre not found?
-                  <span
+                  <span>Genre not found? </span>
+                  <Link
                     className="underline cursor-pointer"
-                    onClick={() => openModal('createGenre')}
+                    href={'/admin/genre/create'}
                   >
-                    {' '}
                     Create Genre
-                  </span>
+                  </Link>
                 </FormDescription>
                 <FormMessage />
               </FormItem>

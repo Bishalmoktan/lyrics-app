@@ -6,12 +6,12 @@ import { IUser } from '@/app/(admin)/admin/users/columns';
 import React, { createContext, useState } from 'react';
 
 type modalType =
-  | 'createGenre'
   | 'deleteSong'
   | 'deleteArtist'
   | 'deleteUser'
   | 'updateUser'
-  | 'updateArtist'
+  | 'toggleFeatureSong'
+  | 'toggleFeatureArtist'
   | null;
 type modalDataType = {
   song?: Song;

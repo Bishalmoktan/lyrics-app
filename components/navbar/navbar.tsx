@@ -3,9 +3,11 @@ import Socials from '@/components/navbar/socials';
 import Routes from '@/components/navbar/routes';
 import { MobileToggle } from '../mobile-toggle';
 import { auth } from '@/auth';
+import { getAllGenre } from '@/lib/admin/actions';
 
 const Navbar = async () => {
   const session = await auth();
+  const genres = await getAllGenre();
   return (
     <>
       <div className="hidden md:flex items-center md:justify-between py-4">
@@ -15,7 +17,7 @@ const Navbar = async () => {
         </div>
         <div className="flex gap-6 items-center">
           <div className="w-[300px] flex-shrink-0">
-            <SearchBox />
+            <SearchBox genres={genres} />
           </div>
           <div>
             <Socials />
@@ -28,7 +30,7 @@ const Navbar = async () => {
           <MobileToggle />
         </div>
         <div className="w-[150px] md:w-[300px] flex-shrink-0">
-          <SearchBox />
+          <SearchBox genres={genres} />
         </div>
         <div>
           <Socials />

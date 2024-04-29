@@ -7,6 +7,7 @@ import UnauthorizedPage from './_components/unauthorized';
 import { ModalProvider } from '@/components/providers/modal-provider';
 import { ModalContextProvider } from '@/components/providers/modal-context-providers';
 import { getUserById } from '@/data/user';
+import { Toaster } from 'sonner';
 
 const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
@@ -24,6 +25,7 @@ const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
         <main className="md:pl-[250px] px-4 md:pr-8 h-full">
           <ModalContextProvider>
             {children}
+            <Toaster richColors />
             <ModalProvider />
           </ModalContextProvider>
         </main>

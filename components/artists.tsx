@@ -1,8 +1,8 @@
 import ArtistTile from '@/components/artist-tile';
-import { getAllArtist } from '@/lib/admin/actions';
+import { getFeaturedArtists } from '@/lib/public-actions/actions';
 
 const Artists = async () => {
-  const artists = await getAllArtist();
+  const artists = await getFeaturedArtists();
 
   return (
     <div className="flex flex-col gap-4 mt-4">

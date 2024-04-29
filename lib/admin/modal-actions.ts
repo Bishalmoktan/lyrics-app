@@ -115,40 +115,55 @@ export const updateUser = async (data: IUser, role: UserRole) => {
   }
 };
 
-export interface IUpdatedArtist {
-  name: string;
-  avatar_url: string;
-  designation: string;
-}
-
 /**
- * Updates Artist
- * @param data @type {IArtist}
+ * Toggle feature song
+ * @param data @type {Song}
  * @returns @type {string}
  */
-export const updateArtist = async (
-  data: IArtist,
-  updatedData: IUpdatedArtist
-) => {
-  const { avatar_url, designation, name } = updatedData;
+export const toggleFeatureSong = async (data: Song) => {
   try {
-    const session = await getCurrentUser();
-    if (session?.user.role === 'USER') {
-      throw new Error('You cannot perform this action');
-    }
+    const { isFeatured } = data;
+    const song = await db.song.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        isFeatured: !isFeatured,
+      },
+    });
 
+    return {
+      msg: `${song.title} is ${
+        isFeatured ? 'removed from' : 'added to'
+      } the featured list!`,
+    };
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+};
+
+/**
+ * Toggle feature artist
+ * @param data @type {artist}
+ * @returns @type {string}
+ */
+export const toggleFeatureArtist = async (data: IArtist) => {
+  try {
+    const { isFeatured } = data;
     const artist = await db.artist.update({
       where: {
         id: data.id,
       },
       data: {
-        avatar_url,
-        designation,
-        name,
+        isFeatured: !isFeatured,
       },
     });
+
     return {
-      msg: `${artist.name} is successfully updated`,
+      msg: `${artist.name} is ${
+        isFeatured ? 'removed from' : 'added to'
+      } the featured list!`,
     };
   } catch (error: any) {
     console.log(error);

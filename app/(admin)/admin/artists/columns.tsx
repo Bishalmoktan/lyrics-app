@@ -11,9 +11,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Artist, Song } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal, ArrowUpDown } from 'lucide-react';
+import { MoreHorizontal, ArrowUpDown, BadgeCheck } from 'lucide-react';
 import DeleteArtistButton from './_components/delete-artist-button';
 import EditArtistButton from './_components/edit-artist-button';
+import ToggleFeaturedArtistButton from './_components/toggle-feature-artist-button';
 
 export interface IArtist extends Artist {
   songs: Song[];
@@ -38,7 +39,10 @@ export const columns: ColumnDef<IArtist>[] = [
       const artist = row.original;
       return (
         <div className="">
-          <h3 className="text-xl">{artist.name}</h3>
+          <div className="flex items-center gap-1">
+            <h3 className="text-xl">{artist.name}</h3>
+            {artist.isFeatured && <BadgeCheck className="size-6" />}
+          </div>
           <p className="text-sm text-zinc-500">{artist.designation}</p>
         </div>
       );
@@ -71,6 +75,9 @@ export const columns: ColumnDef<IArtist>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem className="space-x-3">
               <DeleteArtistButton artist={row.original} />
+            </DropdownMenuItem>
+            <DropdownMenuItem className="space-x-3">
+              <ToggleFeaturedArtistButton artist={row.original} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

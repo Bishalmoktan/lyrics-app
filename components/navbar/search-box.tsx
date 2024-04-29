@@ -18,14 +18,14 @@ import {
   searchArtistByName,
   searchSongsByName,
 } from '@/lib/public-actions/actions';
-import { Artist } from '@prisma/client';
+import { Artist, Genre } from '@prisma/client';
 import SongTile, { songTileProps } from '../song-tile';
 import Link from 'next/link';
 import { categories } from '@/data/categorires';
 import Image from 'next/image';
 import ArtistTile from '../artist-tile';
 
-const SearchBox = () => {
+const SearchBox = ({ genres }: { genres: Genre[] }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -117,19 +117,21 @@ const SearchBox = () => {
 
               {/* genre or category  */}
               <CommandGroup heading="Category">
-                {categories.map((category, index) => (
-                  <CommandItem key={index}>
+                {genres.map((genre) => (
+                  <CommandItem key={genre.id}>
                     <Link
-                      href={`/search?type=${category.label}`}
-                      className={`p-4 ${category.bg} bg-opacity-20 rounded-md flex gap-4 justify-center items-center`}
+                      href={`/search?type=${genre.name}`}
+                      className={`p-4 ${genre.backgroundColor} bg-opacity-20 rounded-md flex gap-4 justify-center items-center`}
                     >
                       <Image
-                        src={category.src}
-                        alt={category.label}
+                        src={genre.image}
+                        alt={genre.name}
+                        width={100}
+                        height={100}
                         className="size-10 object-contain"
                       />
 
-                      <p className="text-lg"> {category.label} </p>
+                      <p className="text-lg"> {genre.name} </p>
                     </Link>
                   </CommandItem>
                 ))}

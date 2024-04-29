@@ -1,8 +1,8 @@
 import SongTile from '@/components/song-tile';
-import { getAllSongs } from '@/lib/public-actions/actions';
+import { getFeaturedSongs } from '@/lib/public-actions/actions';
 
 const Songs = async () => {
-  const songs = await getAllSongs();
+  const songs = await getFeaturedSongs();
 
   return (
     <div className="flex flex-col gap-4 mt-4">

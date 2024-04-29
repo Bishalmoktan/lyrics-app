@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CldUploadWidget, CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 
 import { Button } from '@/components/ui/button';
@@ -21,21 +21,21 @@ import { Upload } from 'lucide-react';
 
 import 'react-quill/dist/quill.snow.css';
 import Image from 'next/image';
-import { createArtist } from '@/lib/admin/actions';
+import { updateArtist, getArtistById, createGenre } from '@/lib/admin/actions';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export const formSchema = z.object({
   name: z.string().min(1, {
     message: 'Name is required.',
   }),
-  designation: z.string().min(1, {
-    message: 'Designation id is required.',
+  background: z.string().min(1, {
+    message: 'Please provide valid color',
   }),
 });
 
-export function AddSongForm() {
-  const [avatar, setAvatar] = useState('');
+export function AddArtistForm() {
+  const [image, setImage] = useState('');
   const [loading, setLoading] = useState(false);
 
   // 1. Define your form.
@@ -43,34 +43,38 @@ export function AddSongForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      designation: '',
+      background: '',
     },
   });
   const router = useRouter();
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (avatar === '') {
+    if (image === '') {
       toast.error('Please upload a picture');
       return;
     }
     try {
       setLoading(true);
-      const res = await createArtist({ avatar, ...values });
+      const res = await createGenre({ image, ...values });
       toast.success(res.msg);
-      router.refresh();
+      router.push('/admin/songs/create');
     } catch (error: any) {
       toast.error(error.message);
     } finally {
       form.reset();
       setLoading(false);
-      setAvatar('');
+      setImage('');
     }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8"
+        autoComplete="off"
+      >
         <FormField
           control={form.control}
           name="name"
@@ -79,12 +83,12 @@ export function AddSongForm() {
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Eg: Sajjan Raj Vaidya"
+                  placeholder="Eg: Pop"
                   className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
                   {...field}
                 />
               </FormControl>
-              <FormDescription>Enter name of the artist.</FormDescription>
+              <FormDescription>Name of the genre.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -93,20 +97,18 @@ export function AddSongForm() {
         {/* Designation */}
         <FormField
           control={form.control}
-          name="designation"
+          name="background"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Designation</FormLabel>
+              <FormLabel>Background Color</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Eg: Singer, SongWriter"
+                  placeholder="Eg: bg-rose-500 or bg-[#57C4FF]"
                   className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
                   {...field}
                 />
               </FormControl>
-              <FormDescription>
-                Write a designation that suits the artist.
-              </FormDescription>
+              <FormDescription>Background color for the genre.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -114,7 +116,7 @@ export function AddSongForm() {
 
         {/* upload image widget  */}
         <div>
-          <p>Artist Picture</p>
+          <p>Picture</p>
           <CldUploadWidget
             options={{
               folder: 'artists',
@@ -122,7 +124,7 @@ export function AddSongForm() {
             signatureEndpoint={'/api/sign-cloudinary-params'}
             onSuccess={(result) => {
               const info = result.info as CloudinaryUploadWidgetInfo;
-              setAvatar(info.secure_url);
+              setImage(info.secure_url);
             }}
           >
             {({ open }) => {
@@ -138,9 +140,9 @@ export function AddSongForm() {
             }}
           </CldUploadWidget>
 
-          {avatar !== '' && (
+          {image !== '' && (
             <Image
-              src={avatar}
+              src={image}
               alt="Preview Image"
               height={'200'}
               width={'200'}

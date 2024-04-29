@@ -47,17 +47,21 @@ model Account {
 }
 
 model Artist {
-  id          String @id @default(cuid())
+  id          String  @id @default(cuid())
   avatar_url  String
   name        String
   designation String
-  songs       Song[]
+  isFeatured  Boolean @default(false)
+
+  songs Song[]
 }
 
 model Genre {
-  id    String @id @default(cuid())
-  name  String @unique
-  songs Song[]
+  id              String @id @default(cuid())
+  name            String @unique
+  image           String
+  backgroundColor String
+  songs           Song[]
 }
 
 model Song {
@@ -69,6 +73,7 @@ model Song {
   duration     String
   story        String?
   nepaliLyrics String?
+  isFeatured   Boolean @default(false)
 
   Artist   Artist? @relation(fields: [artistId], references: [id], onDelete: Cascade)
   artistId String?
