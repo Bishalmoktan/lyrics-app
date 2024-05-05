@@ -21,9 +21,9 @@ import { Upload } from 'lucide-react';
 
 import 'react-quill/dist/quill.snow.css';
 import Image from 'next/image';
-import { updateArtist, getArtistById, createGenre } from '@/lib/admin/actions';
+import { createGenre } from '@/lib/admin/actions';
 import { toast } from 'sonner';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export const formSchema = z.object({
   name: z.string().min(1, {
@@ -34,11 +34,10 @@ export const formSchema = z.object({
   }),
 });
 
-export function AddArtistForm() {
+export function AddGenreForm() {
   const [image, setImage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,7 +47,6 @@ export function AddArtistForm() {
   });
   const router = useRouter();
 
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (image === '') {
       toast.error('Please upload a picture');
@@ -119,7 +117,7 @@ export function AddArtistForm() {
           <p>Picture</p>
           <CldUploadWidget
             options={{
-              folder: 'artists',
+              folder: 'genres',
             }}
             signatureEndpoint={'/api/sign-cloudinary-params'}
             onSuccess={(result) => {

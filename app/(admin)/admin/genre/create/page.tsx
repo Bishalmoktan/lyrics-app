@@ -1,5 +1,5 @@
 import { Separator } from '@/components/ui/separator';
-import { AddArtistForm } from '../_components/form';
+import { AddGenreForm } from '../_components/form';
 
 const CreateGenre = () => {
   return (
@@ -9,7 +9,7 @@ const CreateGenre = () => {
         <p className="text-zinc-500">Create a new genre!</p>
       </div>
       <Separator className="bg-zinc-300" />
-      <AddArtistForm />
+      <AddGenreForm />
     </div>
   );
 };

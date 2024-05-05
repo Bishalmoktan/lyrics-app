@@ -75,8 +75,8 @@ const SearchBox = ({ genres }: { genres: Genre[] }) => {
         </p>
         <Search className="w-4 h-4 text-zinc-500 dark:text-zinc-200" />
       </button>
-      <Command shouldFilter={false}>
-        <CommandDialog open={open} onOpenChange={setOpen}>
+      <Command shouldFilter={false} >
+        <CommandDialog open={open} onOpenChange={setOpen} >
           <CommandInput
             value={searchTerm}
             onValueChange={setSearchTerm}

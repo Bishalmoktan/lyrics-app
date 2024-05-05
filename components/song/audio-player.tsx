@@ -70,41 +70,51 @@ const CustomMusicPlayer: React.FC<{ songId: string }> = ({ songId }) => {
         step={1}
         onChange={handleProgressChange}
       />
-      <div className="bg-rose-500 bg-opacity-60 rounded-t-md p-2">
-        {formatTime(currentTime)} / {formatTime(duration)}
-      </div>
-      <div className="flex gap-2 justify-center items-center bg-rose-500 bg-opacity-60 rounded-b-md pb-2">
-        <div className="flex flex-col gap-1 items-center">
-          <Button className="rounded-full p-2" onClick={() => handleSkip(-10)}>
-            <IterationCcw className="-rotate-180 size-4 md:size-6 cursor-pointer" />
-          </Button>
-          <p className="text-xs">10s</p>
-        </div>
-        {isPlaying ? (
-          <Button className="rounded-full p-4" onClick={handlePlayPause}>
-            <Pause className="size-6 md:size-8 cursor-pointer" />
-          </Button>
-        ) : (
-          <Button className="rounded-full p-4" onClick={handlePlayPause}>
-            <Play className="size-6 md:size-8 cursor-pointer" />
-          </Button>
-        )}
-        <div className="flex flex-col gap-1 items-center">
-          <Button className="rounded-full p-2" onClick={() => handleSkip(10)}>
-            <IterationCw className="rotate-180 size-4 md:size-6 cursor-pointer" />
-          </Button>
-          <p className="text-xs">10s</p>
-        </div>
-      </div>
 
-      <div className="hidden">
-        <YouTube
-          videoId={songId}
-          opts={{ playerVars: { controls: 1 } }}
-          onReady={handleReady}
-          onStateChange={handleStateChange}
-          ref={playerRef}
-        />
+      <div className="relative flex justify-center gap-2 items-center backdrop-blur-md rounded-md p-2">
+        <p className="absolute  left-2 text-xs md:text-sm">
+          {' '}
+          {formatTime(currentTime)} / {formatTime(duration)}
+        </p>
+        <div className="flex gap-2  items-center">
+          <div className="flex flex-col gap-1 items-center">
+            <IterationCcw
+              className="-rotate-180 size-4 cursor-pointer"
+              onClick={() => handleSkip(-10)}
+            />
+            <p className="text-xs">10s</p>
+          </div>
+          {isPlaying ? (
+            <Pause
+              fill="#fff"
+              className="size-8 md:size-10 cursor-pointer "
+              onClick={handlePlayPause}
+            />
+          ) : (
+            <Play
+              fill="#fff"
+              className="size-8 md:size-10 cursor-pointer "
+              onClick={handlePlayPause}
+            />
+          )}
+          <div className="flex flex-col gap-1 items-center">
+            <IterationCw
+              className="rotate-180 size-4 cursor-pointer"
+              onClick={() => handleSkip(10)}
+            />
+            <p className="text-xs">10s</p>
+          </div>
+        </div>
+
+        <div className="hidden">
+          <YouTube
+            videoId={songId}
+            opts={{ playerVars: { controls: 1 } }}
+            onReady={handleReady}
+            onStateChange={handleStateChange}
+            ref={playerRef}
+          />
+        </div>
       </div>
     </div>
   );
