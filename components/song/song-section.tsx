@@ -48,6 +48,7 @@ const SongSection = async ({
                 designation: Artist.designation,
                 name: Artist.name,
                 avatar_url: Artist.avatar_url,
+                isFeatured: Artist.isFeatured
               }}
             />
             <div>

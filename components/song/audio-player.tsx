@@ -2,7 +2,6 @@
 import { IterationCcw, IterationCw, Pause, Play } from 'lucide-react';
 import React, { useCallback, useRef, useState } from 'react';
 import YouTube from 'react-youtube';
-import { Button } from '../ui/button';
 
 const CustomMusicPlayer: React.FC<{ songId: string }> = ({ songId }) => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -61,6 +60,8 @@ const CustomMusicPlayer: React.FC<{ songId: string }> = ({ songId }) => {
 
   return (
     <div>
+
+      <div className="backdrop-blur-md rounded-md p-2">
       <input
         type="range"
         className="w-[300px] md:w-[400px] accent-rose-500"
@@ -70,8 +71,7 @@ const CustomMusicPlayer: React.FC<{ songId: string }> = ({ songId }) => {
         step={1}
         onChange={handleProgressChange}
       />
-
-      <div className="relative flex justify-center gap-2 items-center backdrop-blur-md rounded-md p-2">
+      <div className='relative flex justify-center gap-2 items-center '>
         <p className="absolute  left-2 text-xs md:text-sm">
           {' '}
           {formatTime(currentTime)} / {formatTime(duration)}
@@ -115,6 +115,8 @@ const CustomMusicPlayer: React.FC<{ songId: string }> = ({ songId }) => {
             ref={playerRef}
           />
         </div>
+        </div>
+
       </div>
     </div>
   );
