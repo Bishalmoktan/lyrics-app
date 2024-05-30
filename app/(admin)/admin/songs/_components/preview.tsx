@@ -1,11 +1,10 @@
 import { z } from 'zod';
 import Image from 'next/image';
-import { ISongDetail } from '@/lib/public-actions/actions';
 import CustomMusicPlayer from '@/components/song/audio-player';
 import LyricsContainer from '@/components/song/lyrics-container';
 import ArtistTile from '@/components/artist-tile';
 import { ReadMore } from '@/components/song/read-more';
-import { formSchema } from '../create/_components/form';
+import { ILyricsJson, formSchema } from '../create/_components/form';
 import { Artist } from '@prisma/client';
 
 type previewProps = z.infer<typeof formSchema>;
@@ -13,6 +12,7 @@ type previewProps = z.infer<typeof formSchema>;
 interface IPreviewType extends previewProps {
   thumbnail: string;
   artists: Artist[];
+  jsonLyrics: ILyricsJson[]
 }
 
 const Preview = ({
@@ -20,12 +20,11 @@ const Preview = ({
   story,
   title,
   artist: artistId,
-  genre,
+  jsonLyrics,
   lyrics,
   thumbnail,
   artists,
   nepaliLyrics,
-  duration,
 }: IPreviewType) => {
   let artist: Artist | null = null;
   for (let a of artists) {
@@ -34,6 +33,9 @@ const Preview = ({
       break;
     }
   }
+
+  
+
   return (
     <>
       <div className="w-max">
@@ -54,7 +56,7 @@ const Preview = ({
           </div>
         </div>
         <div>
-          <LyricsContainer englishLyrics={lyrics} nepaliLyrics={nepaliLyrics} />
+          <LyricsContainer englishLyrics={jsonLyrics} nepaliLyrics={nepaliLyrics} />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -67,6 +69,7 @@ const Preview = ({
                   designation: artist?.designation,
                   name: artist?.name,
                   avatar_url: artist?.avatar_url,
+                  isFeatured: artist?.isFeatured
                 }}
               />
             )}

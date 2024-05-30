@@ -3,12 +3,13 @@ import { Separator } from '../ui/separator';
 import { ScrollArea } from '../ui/scroll-area';
 import EnglishLyrics from './english-lyrics';
 import NepaliLyrics from './nepali-lyrics';
+import { ILyricsJson } from '@/app/(admin)/admin/songs/create/_components/form';
 
 const LyricsContainer = ({
   englishLyrics,
   nepaliLyrics,
 }: {
-  englishLyrics: string;
+  englishLyrics: ILyricsJson[];
   nepaliLyrics: string;
 }) => {
   return (

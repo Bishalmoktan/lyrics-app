@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
+import { AppContextProvider } from '@/components/providers/app-context-provider';
 
 const font = Space_Grotesk({ subsets: ['latin'] });
 
@@ -24,7 +25,9 @@ export default function RootLayout({
           enableSystem={true}
           disableTransitionOnChange
         >
+          <AppContextProvider>
           {children}
+          </AppContextProvider>
         </ThemeProvider>
       </body>
     </html>
