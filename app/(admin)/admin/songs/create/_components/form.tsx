@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { CldUploadWidget, CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 
@@ -71,6 +71,7 @@ export const formSchema = z.object({
   lyrics: z.string().min(1, {
     message: 'Lyrics cannot be empty',
   }),
+  timestamp: z.string(),
   nepaliLyrics: z.string(),
 });
 
@@ -79,47 +80,81 @@ interface AddSongFormProps {
   genres: Genre[];
 }
 
+export interface ILyricsJson {
+  text: string;
+  timestamp: number
+}
+
 export function AddSongForm({ artists, genres }: AddSongFormProps) {
   const [thumbnail, setThumbnail] = useState('');
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(true);
+  const [lyricsWithTimestamps, setLyricsWithTimestamps] = useState<ILyricsJson[]>([]);
 
   const ReactQuill = useMemo(
     () => dynamic(() => import('react-quill'), { ssr: false }),
     []
   );
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    // resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
       artist: '',
       duration: '',
       songId: '',
       lyrics: '',
+      timestamp: '',
       story: '',
       nepaliLyrics: '',
       genre: [],
     },
   });
-  const router = useRouter();
 
+  const parseTimestamp = (timestamp: string) => {
+    const [hours, minutes, seconds] = timestamp.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
+      return -1;
+    }
+    return (hours * 3600 + minutes * 60 + seconds) * 1000;
+  };
+
+  const handleLyricsChange = useCallback(() => {
+    const lyricsLines = form.getValues('lyrics').split('<p>').map(line => line.replace('</p>', '').trim()).filter(line => line);
+    const timestampsArray = form.getValues('timestamp').split('<p>').map(time => time.replace('</p>', '').trim()).filter(time => time).map(parseTimestamp);
+    
+    const lyrics = lyricsLines.map((line, index) => ({
+      text: line,
+      timestamp: timestampsArray[index],
+    }));
+
+    setLyricsWithTimestamps(lyrics);
+  }, [form]);
+
+  useEffect(() => {
+    handleLyricsChange();
+  }, [form.getValues('lyrics'), form.getValues('timestamp')]);
+
+
+  const router = useRouter();
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (thumbnail === '') {
-      toast.error('Please upload a picture');
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await postSong({ thumbnail, ...values });
-      toast.success(res?.msg);
-      router.refresh();
-    } catch (error: any) {
-      toast.error(error.message);
-    } finally {
-      form.reset();
-      setLoading(false);
-      setThumbnail('');
-    }
+
+    const lyricsJson = JSON.stringify({ lyrics: lyricsWithTimestamps });
+    // if (thumbnail === '') {
+    //   toast.error('Please upload a picture');
+    //   return;
+    // }
+    // setLoading(true);
+    // try {
+    //   const res = await postSong({ thumbnail, ...values });
+    //   toast.success(res?.msg);
+    //   router.refresh();
+    // } catch (error: any) {
+    //   toast.error(error.message);
+    // } finally {
+    //   form.reset();
+    //   setLoading(false);
+    //   setThumbnail('');
+    // }
   }
   if (showForm) {
     return (
@@ -377,7 +412,13 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
               <FormItem>
                 <FormLabel>Lyrics</FormLabel>
                 <FormControl>
-                  <ReactQuill
+                  {/* <Textarea 
+                    placeholder="Eg: Najeek na aau..."
+                  className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
+                  value={field.value}
+                  onChange={field.onChange}
+                  /> */}
+                <ReactQuill
                     className="bg-white max-w-lg text-gray-900"
                     theme="snow"
                     value={field.value}
@@ -386,6 +427,35 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
                   />
                 </FormControl>
                 <FormDescription>Enter lyrics of the song.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          {/* timestamp */}
+          <FormField
+            control={form.control}
+            name="timestamp"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Timestamp</FormLabel>
+                <FormControl>
+                  {/* <Textarea 
+                    placeholder="Eg: 00:00:20"
+                  className="max-w-sm bg-white focus-visible:ring-transparent text-gray-900"
+                  value={field.value}
+                  onChange={field.onChange}
+                  /> */}
+                     <ReactQuill
+                    className="bg-white max-w-lg text-gray-900"
+                    theme="snow"
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Eg: 00:00:12"
+                  />
+                
+                </FormControl>
+                <FormDescription>Note: You can add this later. </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -430,6 +500,7 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
       <div>
         <Button onClick={() => setShowForm(true)}>Show Form</Button>
         <Preview
+        timestamp={form.getValues('timestamp')}
           artist={form.getValues('artist')}
           genre={form.getValues('genre')}
           lyrics={form.getValues('lyrics')}
@@ -440,6 +511,7 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
           duration={form.getValues('duration')}
           thumbnail={thumbnail}
           artists={artists}
+          jsonLyrics={lyricsWithTimestamps}
         />
       </div>
     );

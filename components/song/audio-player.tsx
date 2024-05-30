@@ -1,6 +1,7 @@
 'use client';
+import { useGlobalApp } from '@/hooks/use-global-app';
 import { IterationCcw, IterationCw, Pause, Play } from 'lucide-react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import YouTube from 'react-youtube';
 
 const CustomMusicPlayer: React.FC<{ songId: string }> = ({ songId }) => {
@@ -9,6 +10,7 @@ const CustomMusicPlayer: React.FC<{ songId: string }> = ({ songId }) => {
   const [duration, setDuration] = useState(0);
   const playerRef = useRef<any>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout>();
+  const { setTimestamp } = useGlobalApp();
 
   const handlePlayPause = () => {
     if (isPlaying) {
@@ -18,6 +20,10 @@ const CustomMusicPlayer: React.FC<{ songId: string }> = ({ songId }) => {
     }
     setIsPlaying(!isPlaying);
   };
+
+  useEffect(() => {
+    setTimestamp(currentTime * 1000);
+  }, [currentTime])
 
   const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = parseFloat(e.target.value);
