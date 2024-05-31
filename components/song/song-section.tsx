@@ -7,6 +7,8 @@ import Songs from '../songs';
 import CustomMusicPlayer from './audio-player';
 import { ISongDetail } from '@/lib/public-actions/actions';
 import { getCurrentUser } from '@/lib/admin/actions';
+import {  JsonArray } from '@prisma/client/runtime/library';
+
 
 const SongSection = async ({
   Artist,
@@ -17,6 +19,9 @@ const SongSection = async ({
   nepaliLyrics,
 }: ISongDetail) => {
   const session = await getCurrentUser();
+
+
+  
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -34,8 +39,11 @@ const SongSection = async ({
         </div>
         <div>
           <LyricsContainer
-            englishLyrics={lyrics}
-            nepaliLyrics={nepaliLyrics || ''}
+          // TODO: FIX THIS TYPESCRIPT ERROR 
+          // @ts-ignore 
+          englishLyrics={JSON.parse(lyrics).lyrics}
+          // @ts-ignore  
+            nepaliLyrics={JSON.parse(nepaliLyrics).lyrics}
           />
         </div>
       </div>

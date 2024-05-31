@@ -238,7 +238,6 @@ export const searchSongsByName = async (query: string) => {
       where: {
         OR: [
           { title: { contains: query, mode: 'insensitive' } },
-          { lyrics: { contains: query, mode: 'insensitive' } },
         ],
       },
       include: {

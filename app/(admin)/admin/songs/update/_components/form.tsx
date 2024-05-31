@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { CldUploadWidget, CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 
@@ -50,6 +50,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Preview from '../../_components/preview';
+import { ILyricsJson } from '../../create/_components/form';
 
 export const formSchema = z.object({
   title: z.string().min(1, {
@@ -71,6 +72,7 @@ export const formSchema = z.object({
   lyrics: z.string().min(1, {
     message: 'Lyrics cannot be empty',
   }),
+  timestamp: z.string(),
   nepaliLyrics: z.string(),
 });
 
@@ -79,18 +81,39 @@ interface UpdateSongFormProps {
   genres: Genre[];
 }
 
+
+const convertLyricsToHTMLWithTimestamps = (lyrics: ILyricsJson[]) => {
+  const lyricsHTML = lyrics.map(line => `<p>${line.text}</p>`).join('');
+  const timestamps = lyrics.map(line => `<p>${convertMillisecondsToTime(line.timestamp)}</p>`).join('');
+  return { lyricsHTML, timestamps };
+};
+
+const convertMillisecondsToTime = (milliseconds: number): string => {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const hours = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+  const minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+  const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+};
+
+const Loading = () => {
+  return <div>Loading...</div>
+}
+
 export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
   const [thumbnail, setThumbnail] = useState('');
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState('');
   const [showForm, setShowForm] = useState(true);
+  const [lyricsWithTimestamps, setLyricsWithTimestamps] = useState<ILyricsJson[]>([]);
+  const [nepaliLyricsWithTimestamps, setNepaliLyricsWithTimestamps] = useState<ILyricsJson[]>([]);
 
   const params = useSearchParams();
 
   const id = params.get('id') || '';
 
   const ReactQuill = useMemo(
-    () => dynamic(() => import('react-quill'), { ssr: false }),
+    () => dynamic(() => import('react-quill'), {ssr: false}),
     []
   );
   const form = useForm<z.infer<typeof formSchema>>({
@@ -103,28 +126,81 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
       story: '',
       nepaliLyrics: '',
       duration: '',
+      timestamp: '',
       genre: [],
     },
   });
+
+
+
+  const parseTimestamp = (timestamp: string) => {
+    const [hours, minutes, seconds] = timestamp.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
+      return -1;
+    }
+    return (hours * 3600 + minutes * 60 + seconds) * 1000;
+  };
+
+  const handleLyricsChange = useCallback(() => {
+    const nepaliLyricsLine = form.getValues('nepaliLyrics').split('<p>').map(line => line.replace('</p>', '').trim()).filter(line => line);
+    const lyricsLines = form.getValues('lyrics').split('<p>').map(line => line.replace('</p>', '').trim()).filter(line => line);
+    const timestampsArray = form.getValues('timestamp').split('<p>').map(time => time.replace('</p>', '').trim()).filter(time => time).map(parseTimestamp);
+    
+    const lyrics = lyricsLines.map((line, index) => ({
+      text: line.trim(),
+      timestamp: timestampsArray[index],
+    }));
+    
+    const nepaliLyrics = nepaliLyricsLine.map((line, index) => ({
+      text: line.trim(),
+      timestamp: timestampsArray[index],
+    }));
+
+    setLyricsWithTimestamps(lyrics);
+    setNepaliLyricsWithTimestamps(nepaliLyrics);
+  }, [form]);
+
+  useEffect(() => {
+    handleLyricsChange();
+  }, [form.getValues('lyrics'), form.getValues('nepaliLyrics'), form.getValues('timestamp')]);
+
+
   useEffect(() => {
     const getData = async () => {
       try {
         const res = await getSongDetail(id);
         form.setValue('artist', res?.Artist?.id || '');
         form.setValue('title', res?.title || '');
-        form.setValue('lyrics', res?.lyrics || '');
+        form.setValue('duration', res?.duration || '');
         form.setValue('songId', res?.songId || '');
         form.setValue('story', res?.story || '');
         const genres = res?.genres.map((genre) => genre.name);
         form.setValue('genre', genres || []);
         setThumbnail(res?.thumbnail || '');
         setUserId(res?.userId || '');
+        // TODO: FIX TYPESCRIPT ERROR
+        // @ts-ignore 
+        const lyrics = JSON.parse(res?.lyrics).lyrics || null;
+        const {lyricsHTML, timestamps} = convertLyricsToHTMLWithTimestamps(lyrics);
+        // TODO: FIX TYPESCRIPT ERROR
+        // @ts-ignore 
+        const nepaliLyrics = JSON.parse(res?.nepaliLyrics).lyrics || null;
+        const { lyricsHTML: nepaliLyricsHtml } = convertLyricsToHTMLWithTimestamps(nepaliLyrics);
+        setTimeout(() => {
+
+          form.setValue('nepaliLyrics', nepaliLyricsHtml);
+          form.setValue('lyrics', lyricsHTML || '');
+          form.setValue('timestamp', timestamps);
+        }, 1000)
+     
       } catch (error: any) {
         console.log(error.message);
       }
     };
     getData();
   }, []);
+
+
   const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -134,7 +210,7 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
     }
     setLoading(true);
     try {
-      const res = await updateSong({ userId, id, thumbnail, ...values });
+      const res = await updateSong({ userId, id, thumbnail, ...values, nepaliLyrics: JSON.stringify(nepaliLyricsWithTimestamps), lyrics: JSON.stringify(lyricsWithTimestamps)  });
       toast.success(res?.msg);
       router.refresh();
     } catch (error: any) {
@@ -415,6 +491,30 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
             )}
           />
 
+             {/* timestamp */}
+             <FormField
+            control={form.control}
+            name="timestamp"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Timestamp</FormLabel>
+                <FormControl>
+               
+                     <ReactQuill
+                    className="bg-white max-w-lg text-gray-900"
+                    theme="snow"
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Eg: 00:00:12"
+                  />
+                
+                </FormControl>
+                <FormDescription>Note: You can add this later. </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="nepaliLyrics"
@@ -453,6 +553,7 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
       <div>
         <Button onClick={() => setShowForm(true)}>Show Form</Button>
         <Preview
+        timestamp={form.getValues('timestamp')}
           artist={form.getValues('artist')}
           genre={form.getValues('genre')}
           lyrics={form.getValues('lyrics')}
@@ -463,6 +564,9 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
           duration={form.getValues('duration')}
           thumbnail={thumbnail}
           artists={artists}
+          jsonLyrics={lyricsWithTimestamps}
+          jsonNepaliLyrics={nepaliLyricsWithTimestamps}
+          
         />
       </div>
     );

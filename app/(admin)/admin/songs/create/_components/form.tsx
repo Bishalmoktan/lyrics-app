@@ -85,11 +85,13 @@ export interface ILyricsJson {
   timestamp: number
 }
 
+
 export function AddSongForm({ artists, genres }: AddSongFormProps) {
   const [thumbnail, setThumbnail] = useState('');
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(true);
   const [lyricsWithTimestamps, setLyricsWithTimestamps] = useState<ILyricsJson[]>([]);
+  const [nepaliLyricsWithTimestamps, setNepaliLyricsWithTimestamps] = useState<ILyricsJson[]>([]);
 
   const ReactQuill = useMemo(
     () => dynamic(() => import('react-quill'), { ssr: false }),
@@ -119,42 +121,48 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
   };
 
   const handleLyricsChange = useCallback(() => {
+    const nepaliLyricsLine = form.getValues('nepaliLyrics').split('<p>').map(line => line.replace('</p>', '').trim()).filter(line => line);
     const lyricsLines = form.getValues('lyrics').split('<p>').map(line => line.replace('</p>', '').trim()).filter(line => line);
     const timestampsArray = form.getValues('timestamp').split('<p>').map(time => time.replace('</p>', '').trim()).filter(time => time).map(parseTimestamp);
     
     const lyrics = lyricsLines.map((line, index) => ({
-      text: line,
+      text: line.trim(),
+      timestamp: timestampsArray[index],
+    }));
+    
+    const nepaliLyrics = nepaliLyricsLine.map((line, index) => ({
+      text: line.trim(),
       timestamp: timestampsArray[index],
     }));
 
     setLyricsWithTimestamps(lyrics);
+    setNepaliLyricsWithTimestamps(nepaliLyrics);
   }, [form]);
 
   useEffect(() => {
     handleLyricsChange();
-  }, [form.getValues('lyrics'), form.getValues('timestamp')]);
+  }, [form.getValues('lyrics'), form.getValues('nepaliLyrics'), form.getValues('timestamp')]);
 
 
   const router = useRouter();
   async function onSubmit(values: z.infer<typeof formSchema>) {
 
-    const lyricsJson = JSON.stringify({ lyrics: lyricsWithTimestamps });
-    // if (thumbnail === '') {
-    //   toast.error('Please upload a picture');
-    //   return;
-    // }
-    // setLoading(true);
-    // try {
-    //   const res = await postSong({ thumbnail, ...values });
-    //   toast.success(res?.msg);
-    //   router.refresh();
-    // } catch (error: any) {
-    //   toast.error(error.message);
-    // } finally {
-    //   form.reset();
-    //   setLoading(false);
-    //   setThumbnail('');
-    // }
+    if (thumbnail === '') {
+      toast.error('Please upload a picture');
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await postSong({ thumbnail, ...values, nepaliLyrics: JSON.stringify(nepaliLyricsWithTimestamps), lyrics: JSON.stringify(lyricsWithTimestamps) });
+      toast.success(res?.msg);
+      router.refresh();
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      form.reset();
+      setLoading(false);
+      setThumbnail('');
+    }
   }
   if (showForm) {
     return (
@@ -512,6 +520,7 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
           thumbnail={thumbnail}
           artists={artists}
           jsonLyrics={lyricsWithTimestamps}
+          jsonNepaliLyrics={nepaliLyricsWithTimestamps}
         />
       </div>
     );
