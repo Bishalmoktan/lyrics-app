@@ -67,12 +67,12 @@ model Genre {
 model Song {
   id           String  @id @default(cuid())
   thumbnail    String
-  lyrics       String
+  lyrics       Json
   title        String
   songId       String
   duration     String
   story        String?
-  nepaliLyrics String?
+  nepaliLyrics Json?
   isFeatured   Boolean @default(false)
 
   Artist   Artist? @relation(fields: [artistId], references: [id], onDelete: Cascade)
@@ -82,6 +82,8 @@ model Song {
 
   genres   Genre[]
   comments Comment[]
+
+  @@index([songId, artistId, userId])
 }
 
 model Comment {
@@ -94,4 +96,6 @@ model Comment {
 
   song   Song   @relation(fields: [songId], references: [id], onDelete: Cascade)
   songId String
+
+  @@index([userId, songId])
 }

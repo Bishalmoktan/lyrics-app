@@ -13,6 +13,7 @@ interface IPreviewType extends previewProps {
   thumbnail: string;
   artists: Artist[];
   jsonLyrics: ILyricsJson[]
+  jsonNepaliLyrics: ILyricsJson[]
 }
 
 const Preview = ({
@@ -21,10 +22,9 @@ const Preview = ({
   title,
   artist: artistId,
   jsonLyrics,
-  lyrics,
   thumbnail,
   artists,
-  nepaliLyrics,
+  jsonNepaliLyrics
 }: IPreviewType) => {
   let artist: Artist | null = null;
   for (let a of artists) {
@@ -56,7 +56,7 @@ const Preview = ({
           </div>
         </div>
         <div>
-          <LyricsContainer englishLyrics={jsonLyrics} nepaliLyrics={nepaliLyrics} />
+          <LyricsContainer englishLyrics={jsonLyrics} nepaliLyrics={jsonNepaliLyrics} />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

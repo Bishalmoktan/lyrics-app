@@ -347,6 +347,8 @@ export const getSongDetail = async (id: string) => {
         songId: true,
         thumbnail: true,
         userId: true,
+        duration: true,
+        nepaliLyrics: true
       },
     });
     return res;

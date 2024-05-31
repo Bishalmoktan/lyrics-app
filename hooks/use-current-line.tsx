@@ -13,9 +13,12 @@ export function useCurrentLine(timestamp: number, lyrics: ILyricsJson[]){
             setCurrentLine(lyrics[0]);
             return;
         }
+        if(nextLineIndex === -1){
+            setCurrentLine(lyrics[lyrics.length - 1])
+            return;
+        }
 
         setCurrentLine(lyrics[nextLineIndex - 1]);
-        console.log(currentLine)
     }, [timestamp])
 
     return { currentLine };
