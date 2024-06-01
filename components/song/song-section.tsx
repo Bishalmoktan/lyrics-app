@@ -41,9 +41,9 @@ const SongSection = async ({
           <LyricsContainer
           // TODO: FIX THIS TYPESCRIPT ERROR 
           // @ts-ignore 
-          englishLyrics={JSON.parse(lyrics).lyrics}
+          englishLyrics={lyrics}
           // @ts-ignore  
-            nepaliLyrics={JSON.parse(nepaliLyrics).lyrics}
+            nepaliLyrics={nepaliLyrics}
           />
         </div>
       </div>

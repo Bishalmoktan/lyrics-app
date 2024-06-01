@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import dynamic from 'next/dynamic';
-import { CldUploadWidget, CloudinaryUploadWidgetInfo } from 'next-cloudinary';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
+import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
+} from "@/components/ui/command";
 import {
   Form,
   FormControl,
@@ -23,15 +23,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from "@/components/ui/form";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
-import { Check, ChevronsUpDown, Upload } from 'lucide-react';
+} from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { Check, ChevronsUpDown, Upload } from "lucide-react";
 import {
   MultiSelector,
   MultiSelectorContent,
@@ -39,38 +39,39 @@ import {
   MultiSelectorItem,
   MultiSelectorList,
   MultiSelectorTrigger,
-} from '@/components/ui/multi-select';
+} from "@/components/ui/multi-select";
 
-import 'react-quill/dist/quill.snow.css';
-import { getSongDetail, updateSong } from '@/lib/admin/actions';
-import Image from 'next/image';
-import { Textarea } from '@/components/ui/textarea';
-import { Artist, Genre } from '@prisma/client';
-import Link from 'next/link';
-import { toast } from 'sonner';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Preview from '../../_components/preview';
-import { ILyricsJson } from '../../create/_components/form';
+import "react-quill/dist/quill.snow.css";
+import { getSongDetail, updateSong } from "@/lib/admin/actions";
+import Image from "next/image";
+import { Textarea } from "@/components/ui/textarea";
+import { Artist, Genre } from "@prisma/client";
+import Link from "next/link";
+import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
+import Preview from "../../_components/preview";
+import { ILyricsJson } from "../../create/_components/form";
+import { JsonArray } from "@prisma/client/runtime/library";
 
 export const formSchema = z.object({
   title: z.string().min(1, {
-    message: 'Title is required.',
+    message: "Title is required.",
   }),
   songId: z.string().min(1, {
-    message: 'Song id is required.',
+    message: "Song id is required.",
   }),
   duration: z.string().min(1, {
-    message: 'Duration cannot be empty.',
+    message: "Duration cannot be empty.",
   }),
   story: z.string(),
   artist: z.string().min(1, {
-    message: 'Please select an Artist.',
+    message: "Please select an Artist.",
   }),
   genre: z.array(z.string()).min(1, {
-    message: 'Please select a genre.',
+    message: "Please select a genre.",
   }),
   lyrics: z.string().min(1, {
-    message: 'Lyrics cannot be empty',
+    message: "Lyrics cannot be empty",
   }),
   timestamp: z.string(),
   nepaliLyrics: z.string(),
@@ -81,60 +82,64 @@ interface UpdateSongFormProps {
   genres: Genre[];
 }
 
-
 const convertLyricsToHTMLWithTimestamps = (lyrics: ILyricsJson[]) => {
-  const lyricsHTML = lyrics.map(line => `<p>${line.text}</p>`).join('');
-  const timestamps = lyrics.map(line => `<p>${convertMillisecondsToTime(line.timestamp)}</p>`).join('');
+  const lyricsHTML = lyrics.map((line) => `<p>${line.text}</p>`).join("");
+  const timestamps = lyrics
+    .map((line) => `<p>${convertMillisecondsToTime(line.timestamp)}</p>`)
+    .join("");
   return { lyricsHTML, timestamps };
 };
 
 const convertMillisecondsToTime = (milliseconds: number): string => {
   const totalSeconds = Math.floor(milliseconds / 1000);
-  const hours = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
-  const minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
-  const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+  const hours = Math.floor(totalSeconds / 3600)
+    .toString()
+    .padStart(2, "0");
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+    .toString()
+    .padStart(2, "0");
+  const seconds = (totalSeconds % 60).toString().padStart(2, "0");
   return `${hours}:${minutes}:${seconds}`;
 };
 
-const Loading = () => {
-  return <div>Loading...</div>
-}
 
 export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
-  const [thumbnail, setThumbnail] = useState('');
+  const [thumbnail, setThumbnail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState("");
   const [showForm, setShowForm] = useState(true);
-  const [lyricsWithTimestamps, setLyricsWithTimestamps] = useState<ILyricsJson[]>([]);
-  const [nepaliLyricsWithTimestamps, setNepaliLyricsWithTimestamps] = useState<ILyricsJson[]>([]);
+  const [lyricsWithTimestamps, setLyricsWithTimestamps] = useState<
+    ILyricsJson[]
+  >([]);
+  const [nepaliLyricsWithTimestamps, setNepaliLyricsWithTimestamps] = useState<
+    ILyricsJson[]
+  >([]);
 
   const params = useSearchParams();
 
-  const id = params.get('id') || '';
+  const id = params.get("id") || "";
 
   const ReactQuill = useMemo(
-    () => dynamic(() => import('react-quill'), {ssr: false}),
+    () => dynamic(() => import("react-quill"), { ssr: false }),
     []
   );
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
-      artist: '',
-      songId: '',
-      lyrics: '',
-      story: '',
-      nepaliLyrics: '',
-      duration: '',
-      timestamp: '',
+      title: "",
+      artist: "",
+      songId: "",
+      lyrics: "",
+      story: "",
+      nepaliLyrics: "",
+      duration: "",
+      timestamp: "",
       genre: [],
     },
   });
 
-
-
   const parseTimestamp = (timestamp: string) => {
-    const [hours, minutes, seconds] = timestamp.split(':').map(Number);
+    const [hours, minutes, seconds] = timestamp.split(":").map(Number);
     if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
       return -1;
     }
@@ -142,15 +147,28 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
   };
 
   const handleLyricsChange = useCallback(() => {
-    const nepaliLyricsLine = form.getValues('nepaliLyrics').split('<p>').map(line => line.replace('</p>', '').trim()).filter(line => line);
-    const lyricsLines = form.getValues('lyrics').split('<p>').map(line => line.replace('</p>', '').trim()).filter(line => line);
-    const timestampsArray = form.getValues('timestamp').split('<p>').map(time => time.replace('</p>', '').trim()).filter(time => time).map(parseTimestamp);
-    
+    const nepaliLyricsLine = form
+      .getValues("nepaliLyrics")
+      .split("<p>")
+      .map((line) => line.replace("</p>", "").trim())
+      .filter((line) => line);
+    const lyricsLines = form
+      .getValues("lyrics")
+      .split("<p>")
+      .map((line) => line.replace("</p>", "").trim())
+      .filter((line) => line);
+    const timestampsArray = form
+      .getValues("timestamp")
+      .split("<p>")
+      .map((time) => time.replace("</p>", "").trim())
+      .filter((time) => time)
+      .map(parseTimestamp);
+
     const lyrics = lyricsLines.map((line, index) => ({
       text: line.trim(),
       timestamp: timestampsArray[index],
     }));
-    
+
     const nepaliLyrics = nepaliLyricsLine.map((line, index) => ({
       text: line.trim(),
       timestamp: timestampsArray[index],
@@ -162,37 +180,41 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
 
   useEffect(() => {
     handleLyricsChange();
-  }, [form.getValues('lyrics'), form.getValues('nepaliLyrics'), form.getValues('timestamp')]);
-
+  }, [
+    form.getValues("lyrics"),
+    form.getValues("nepaliLyrics"),
+    form.getValues("timestamp"),
+  ]);
 
   useEffect(() => {
     const getData = async () => {
       try {
         const res = await getSongDetail(id);
-        form.setValue('artist', res?.Artist?.id || '');
-        form.setValue('title', res?.title || '');
-        form.setValue('duration', res?.duration || '');
-        form.setValue('songId', res?.songId || '');
-        form.setValue('story', res?.story || '');
+        form.setValue("artist", res?.Artist?.id || "");
+        form.setValue("title", res?.title || "");
+        form.setValue("duration", res?.duration || "");
+        form.setValue("songId", res?.songId || "");
+        form.setValue("story", res?.story || "");
         const genres = res?.genres.map((genre) => genre.name);
-        form.setValue('genre', genres || []);
-        setThumbnail(res?.thumbnail || '');
-        setUserId(res?.userId || '');
+        form.setValue("genre", genres || []);
+        setThumbnail(res?.thumbnail || "");
+        setUserId(res?.userId || "");
         // TODO: FIX TYPESCRIPT ERROR
-        // @ts-ignore 
-        const lyrics = JSON.parse(res?.lyrics).lyrics || null;
-        const {lyricsHTML, timestamps} = convertLyricsToHTMLWithTimestamps(lyrics);
+        // @ts-ignore
+        const lyrics = res?.lyrics as ILyricsJson[];
+        const { lyricsHTML, timestamps } =
+        convertLyricsToHTMLWithTimestamps(lyrics);
+        console.log(lyricsHTML)
         // TODO: FIX TYPESCRIPT ERROR
-        // @ts-ignore 
-        const nepaliLyrics = JSON.parse(res?.nepaliLyrics).lyrics || null;
-        const { lyricsHTML: nepaliLyricsHtml } = convertLyricsToHTMLWithTimestamps(nepaliLyrics);
-        setTimeout(() => {
-
-          form.setValue('nepaliLyrics', nepaliLyricsHtml);
-          form.setValue('lyrics', lyricsHTML || '');
-          form.setValue('timestamp', timestamps);
-        }, 1000)
-     
+        // @ts-ignore
+        const nepaliLyrics = res?.nepaliLyrics as ILyricsJson[];
+        console.log(nepaliLyrics)
+        const { lyricsHTML: nepaliLyricsHtml } =
+          convertLyricsToHTMLWithTimestamps(nepaliLyrics);
+          
+        form.setValue("nepaliLyrics", nepaliLyricsHtml);
+        form.setValue("lyrics", lyricsHTML || "");
+        form.setValue("timestamp", timestamps);
       } catch (error: any) {
         console.log(error.message);
       }
@@ -200,17 +222,23 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
     getData();
   }, []);
 
-
   const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (thumbnail === '') {
-      toast.error('Please upload a picture');
+    if (thumbnail === "") {
+      toast.error("Please upload a picture");
       return;
     }
     setLoading(true);
     try {
-      const res = await updateSong({ userId, id, thumbnail, ...values, nepaliLyrics: JSON.stringify(nepaliLyricsWithTimestamps), lyrics: JSON.stringify(lyricsWithTimestamps)  });
+      const res = await updateSong({
+        userId,
+        id,
+        thumbnail,
+        ...values,
+        nepaliLyrics: JSON.stringify(nepaliLyricsWithTimestamps),
+        lyrics: JSON.stringify(lyricsWithTimestamps),
+      });
       toast.success(res?.msg);
       router.refresh();
     } catch (error: any) {
@@ -218,7 +246,7 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
     } finally {
       form.reset();
       setLoading(false);
-      setThumbnail('');
+      setThumbnail("");
     }
   }
   if (showForm) {
@@ -325,14 +353,14 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
                         variant="outline"
                         role="combobox"
                         className={cn(
-                          'max-w-sm justify-between bg-white text-gray-900 hover:bg-white hover:text-gray-500',
-                          !field.value && 'text-gray-500'
+                          "max-w-sm justify-between bg-white text-gray-900 hover:bg-white hover:text-gray-500",
+                          !field.value && "text-gray-500"
                         )}
                       >
                         {field.value
                           ? artists.find((artist) => artist.id === field.value)
                               ?.name
-                          : 'Select Artist'}
+                          : "Select Artist"}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0" />
                       </Button>
                     </FormControl>
@@ -343,7 +371,7 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
                       <CommandEmpty>
                         <span>Artist not found. </span>
                         <Link
-                          href={'/admin/artists/create'}
+                          href={"/admin/artists/create"}
                           className="underline"
                         >
                           Create Artist
@@ -355,15 +383,15 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
                             value={artist.name}
                             key={artist.id}
                             onSelect={() => {
-                              form.setValue('artist', artist.id);
+                              form.setValue("artist", artist.id);
                             }}
                           >
                             <Check
                               className={cn(
-                                'mr-2 h-4 w-4',
+                                "mr-2 h-4 w-4",
                                 artist.id === field.value
-                                  ? 'opacity-100'
-                                  : 'opacity-0'
+                                  ? "opacity-100"
+                                  : "opacity-0"
                               )}
                             />
                             <span> {artist.name}</span>
@@ -374,9 +402,9 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
                   </PopoverContent>
                 </Popover>
                 <FormDescription>
-                  Select the arist. Artist not found?{' '}
+                  Select the arist. Artist not found?{" "}
                   <Link
-                    href={'/admin/artists/create'}
+                    href={"/admin/artists/create"}
                     className="underline underline-offset-1"
                   >
                     Create here
@@ -422,9 +450,9 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
                   Genre not found?
                   <Link
                     className="underline cursor-pointer"
-                    href={'/admin/genre/create'}
+                    href={"/admin/genre/create"}
                   >
-                    {' '}
+                    {" "}
                     Create Genre
                   </Link>
                 </FormDescription>
@@ -438,9 +466,9 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
             <p>Thumbnail</p>
             <CldUploadWidget
               options={{
-                folder: 'thumbnails',
+                folder: "thumbnails",
               }}
-              signatureEndpoint={'/api/sign-cloudinary-params'}
+              signatureEndpoint={"/api/sign-cloudinary-params"}
               onSuccess={(result) => {
                 const info = result.info as CloudinaryUploadWidgetInfo;
                 setThumbnail(info.secure_url);
@@ -459,12 +487,12 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
               }}
             </CldUploadWidget>
 
-            {thumbnail !== '' && (
+            {thumbnail !== "" && (
               <Image
                 src={thumbnail}
                 alt="Preview Image"
-                height={'400'}
-                width={'600'}
+                height={"400"}
+                width={"600"}
               />
             )}
           </div>
@@ -491,25 +519,25 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
             )}
           />
 
-             {/* timestamp */}
-             <FormField
+          {/* timestamp */}
+          <FormField
             control={form.control}
             name="timestamp"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Timestamp</FormLabel>
                 <FormControl>
-               
-                     <ReactQuill
+                  <ReactQuill
                     className="bg-white max-w-lg text-gray-900"
                     theme="snow"
                     value={field.value}
                     onChange={field.onChange}
                     placeholder="Eg: 00:00:12"
                   />
-                
                 </FormControl>
-                <FormDescription>Note: You can add this later. </FormDescription>
+                <FormDescription>
+                  Note: You can add this later.{" "}
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -553,20 +581,19 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
       <div>
         <Button onClick={() => setShowForm(true)}>Show Form</Button>
         <Preview
-        timestamp={form.getValues('timestamp')}
-          artist={form.getValues('artist')}
-          genre={form.getValues('genre')}
-          lyrics={form.getValues('lyrics')}
-          songId={form.getValues('songId')}
-          story={form.getValues('story')}
-          title={form.getValues('title')}
-          nepaliLyrics={form.getValues('nepaliLyrics')}
-          duration={form.getValues('duration')}
+          timestamp={form.getValues("timestamp")}
+          artist={form.getValues("artist")}
+          genre={form.getValues("genre")}
+          lyrics={form.getValues("lyrics")}
+          songId={form.getValues("songId")}
+          story={form.getValues("story")}
+          title={form.getValues("title")}
+          nepaliLyrics={form.getValues("nepaliLyrics")}
+          duration={form.getValues("duration")}
           thumbnail={thumbnail}
           artists={artists}
           jsonLyrics={lyricsWithTimestamps}
           jsonNepaliLyrics={nepaliLyricsWithTimestamps}
-          
         />
       </div>
     );
