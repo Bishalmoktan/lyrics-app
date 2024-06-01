@@ -50,14 +50,14 @@ export const postSong = async (data: IPostSongData) => {
 
     await db.song.create({
       data: {
-        lyrics,
+        lyrics: JSON.parse(lyrics),
         artistId: artist,
         songId,
         thumbnail,
         title,
         userId: session.user.id!,
         story,
-        nepaliLyrics,
+        nepaliLyrics: JSON.parse(nepaliLyrics),
         duration,
         genres: {
           connect: genre.map((name) => ({ name })),
@@ -79,7 +79,7 @@ export const postSong = async (data: IPostSongData) => {
  * @type {IPostSongData[]}
  */
 export const updateSong = async (data: IPostSongData) => {
-  const { artist, genre, songId, lyrics, story, thumbnail, title, id, userId } =
+  const { artist, genre, songId, lyrics,nepaliLyrics, story, thumbnail, title, id, userId, duration } =
     data;
   try {
     const session = await auth();
@@ -96,8 +96,10 @@ export const updateSong = async (data: IPostSongData) => {
         id: id,
       },
       data: {
-        lyrics,
+        lyrics: JSON.parse(lyrics),
+        nepaliLyrics: JSON.parse(nepaliLyrics),
         artistId: artist,
+        duration: duration,
         songId,
         thumbnail,
         title,
