@@ -1,6 +1,6 @@
 import instagram from '@/public/instagram.png';
 import facebook from '@/public/facebook.png';
-import youtube from '@/public/Youtube.png';
+import youtube from '@/public/youtube.png';
 import Image from 'next/image';
 
 const Socials = () => {
