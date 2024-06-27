@@ -6,12 +6,13 @@ import Socials from '@/components/navbar/socials';
 import envelope from '@/public/mail.png';
 import { Separator } from '@/components/ui/separator';
 import { auth } from '@/auth';
+import Logo from '@/components/logo';
 
 const Footer = async () => {
   const session = await auth();
   return (
     <div className="mt-auto space-y-4 md:space-y-10">
-      <h2 className="text-2xl font-bold">BoSS</h2>
+      <Logo />
       <div className="flex flex-col md:flex-row justify-between gap-4">
         <Routes session={session} />
         <div className="space-y-4">

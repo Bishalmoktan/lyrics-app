@@ -6,7 +6,7 @@ const Header = () => {
       <div className="bg-brand-light/80 bg-opacity-80 pt-32 text-center">
         <h2 className="text-5xl font-bold">ABOUT US</h2>
         <p className="text-xl max-w-[70vw] mx-auto">
-          Welcome to [REPLACE_NAME], your ultimate destination for discovering,
+          Welcome to BISARIC, your ultimate destination for discovering,
           exploring, and sharing the world of music and lyrics.
         </p>
         <div className="mt-12 flex flex-col items-center justify-center pb-4">

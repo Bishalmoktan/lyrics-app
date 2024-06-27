@@ -6,8 +6,10 @@ import { UserRole } from '@prisma/client';
 import { LogIn, LogOut, ShieldCheck } from 'lucide-react';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import logo from "@/public/logo.svg"
 
 const MobileRoutes = ({ session }: { session: Session | null }) => {
   const path = usePathname();
@@ -20,7 +22,11 @@ const MobileRoutes = ({ session }: { session: Session | null }) => {
   };
   return (
     <div className="p-4 space-y-8">
-      <h1 className="text-2xl">BoSS</h1>
+      <div className='w-24'>
+       <Link href={"/"} >
+      <Image src={logo} alt="logo" className="object-cover" />
+    </Link>
+      </div>
       <div className="space-y-2">
         {routes.map((route, index) => {
           const Icon = route.icon;

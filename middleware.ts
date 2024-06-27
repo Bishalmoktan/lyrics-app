@@ -16,9 +16,16 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
 
   const isApiRoute = nextUrl.pathname.startsWith(apiPrefix);
+  let isPublicRoutePrefix = false;
+  for(let route of publicRoutesPrefix){
+    if(nextUrl.pathname.startsWith(route)){
+      isPublicRoutePrefix = true;
+      break;
+    }
+  }
   const isPublicRoute =
     publicRoutes.includes(nextUrl.pathname) ||
-    nextUrl.pathname.startsWith(publicRoutesPrefix);
+    isPublicRoutePrefix;
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
   if (isApiRoute) {
