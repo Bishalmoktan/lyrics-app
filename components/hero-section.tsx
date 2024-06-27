@@ -24,7 +24,7 @@ const HeroSection = () => {
             <p>
               Are you curious about the stories, emotions, and inspirations
               woven into the lyrics of your favorite songs? Welcome to
-              [REPLACE_NAME], your portal to the lyrical world of music!
+              BISARIC, your portal to the lyrical world of music!
             </p>
           </div>
           <Button className="w-max">Explore</Button>

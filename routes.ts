@@ -29,7 +29,7 @@ export const publicRoutes = ['/', '/about', '/contact'];
  * These are the routes which are accecsible to public
  * These routes do not require authentication
  */
-export const publicRoutesPrefix = '/songs';
+export const publicRoutesPrefix = ['/songs', '/search'];
 
 /**
  * An array of routes that are used for authentication

@@ -4,6 +4,7 @@ import Routes from '@/components/navbar/routes';
 import { MobileToggle } from '../mobile-toggle';
 import { auth } from '@/auth';
 import { getAllGenre } from '@/lib/admin/actions';
+import Logo from '@/components/logo';
 
 const Navbar = async () => {
   const session = await auth();
@@ -12,7 +13,7 @@ const Navbar = async () => {
     <>
       <div className="hidden md:flex items-center md:justify-between py-4">
         <div className="hidden md:flex gap-12 items-center">
-          <h1 className="text-2xl font-bold">BoSS</h1>
+          <Logo />
           <Routes session={session} />
         </div>
         <div className="flex gap-6 items-center">
