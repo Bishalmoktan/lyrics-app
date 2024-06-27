@@ -1,14 +1,37 @@
-import type { Metadata } from 'next';
-import { Space_Grotesk } from 'next/font/google';
-import './globals.css';
-import { ThemeProvider } from '@/components/theme-provider';
-import { AppContextProvider } from '@/components/providers/app-context-provider';
+import type { Metadata } from "next";
+import { Space_Grotesk } from "next/font/google";
+import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { AppContextProvider } from "@/components/providers/app-context-provider";
 
-const font = Space_Grotesk({ subsets: ['latin'] });
+const font = Space_Grotesk({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Lyrics App',
-  description: 'Find lyrics for you music',
+  metadataBase: new URL("https://www.bisaric.com"),
+
+  title: {
+    template: "%s | BISARIC",
+    default: "BISARIC",
+  },
+  authors: {
+    name: "BISARIC",
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
+
+  description:
+    "Created with a vision to create a community-driven platform where users could not only access lyrics but also engage with them in meaningful ways. What started as a passion project has now evolved into a thrivingˀ ecosystem of music enthusiasts, artists, and lyric aficionados.",
+  openGraph: {
+    title: "Bishal Moktan",
+    description:
+      "Created with a vision to create a community-driven platform where users could not only access lyrics but also engage with them in meaningful ways. What started as a passion project has now evolved into a thrivingˀ ecosystem of music enthusiasts, artists, and lyric aficionados.",
+    url: "https://www.bisaric.com",
+    siteName: "Bishal Moktan",
+    images: "/og.png",
+    type: "website",
+  },
+  keywords: ["nepali lyrics", "lyrics of nepali songs", "nepali songs", "new nepali songs"],
 };
 
 export default function RootLayout({
@@ -24,9 +47,7 @@ export default function RootLayout({
           defaultTheme="dark"
           disableTransitionOnChange
         >
-          <AppContextProvider>
-          {children}
-          </AppContextProvider>
+          <AppContextProvider>{children}</AppContextProvider>
         </ThemeProvider>
       </body>
     </html>
