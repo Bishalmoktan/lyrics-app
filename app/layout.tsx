@@ -3,6 +3,7 @@ import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppContextProvider } from "@/components/providers/app-context-provider";
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const font = Space_Grotesk({ subsets: ["latin"] });
 
@@ -49,6 +50,7 @@ export default function RootLayout({
         >
           <AppContextProvider>{children}</AppContextProvider>
         </ThemeProvider>
+        <GoogleAnalytics gaId="G-CBNDLKKS18" />
       </body>
     </html>
   );
