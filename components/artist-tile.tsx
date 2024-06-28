@@ -6,7 +6,7 @@ const ArtistTile = ({ artist }: { artist: Artist }) => {
   return (
     <Link
       href={`/search?artistId=${artist.id}`}
-      className="flex gap-8 cursor-pointer items-center"
+      className="flex gap-8 cursor-pointer items-center hover:bg-brand-light w-full transition-all p-4 rounded-md"
     >
       <Image
         src={artist.avatar_url}

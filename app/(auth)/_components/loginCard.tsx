@@ -16,7 +16,7 @@ const LoginCard = () => {
     <div className="w-[90vw] md:w-[30vw] p-4 text-center space-y-4">
       <div>
         <p>Hey user,</p>
-        <h2 className="text-2xl font-bold">Welcome to BoSS</h2>
+        <h2 className="text-2xl font-bold">Welcome to BISARIC</h2>
       </div>
       <Button className="space-x-4" onClick={() => handleLogin('google')}>
         <Image src={googleIcon} alt="Google" className="size-6" />

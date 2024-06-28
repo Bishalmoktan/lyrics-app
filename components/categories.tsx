@@ -1,4 +1,3 @@
-// import { categories } from '@/data/categorires';
 import { getAllGenre } from '@/lib/admin/actions';
 import Image from 'next/image';
 
@@ -14,7 +13,7 @@ const Categories = async () => {
           <Link
             href={`/search?type=${category.name}`}
             key={category.id}
-            className={`p-4 ${category.backgroundColor} bg-opacity-20 rounded-md flex gap-4 justify-center items-center`}
+            className={`p-4 ${category.backgroundColor} hover:bg-opacity-50 bg-opacity-20 transition-all rounded-md flex gap-4 justify-center items-center`}
           >
             <Image
               src={category.image}
