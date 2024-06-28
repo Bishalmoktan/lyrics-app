@@ -20,7 +20,7 @@ const Footer = async () => {
           <div className="flex gap-2 items-center">
             <Image src={envelope} alt="Envelope" className="size-8" />
             <Link href={'mailto:bishalmoktan270@gmail.com'}>
-              boss@gmail.com
+              bisaric@gmail.com
             </Link>
           </div>
         </div>

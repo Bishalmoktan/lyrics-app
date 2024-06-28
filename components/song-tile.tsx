@@ -10,7 +10,7 @@ const SongTile = ({ song }: { song: songTileProps }) => {
   return (
     <Link
       href={`/songs/${song.id}`}
-      className="flex gap-8 cursor-pointer items-center"
+      className="flex gap-8 cursor-pointer items-center hover:bg-brand-light transition-all w-[85%] p-4 rounded-md"
     >
       <Image
         src={song.thumbnail}
