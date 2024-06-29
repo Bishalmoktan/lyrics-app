@@ -4,7 +4,7 @@ import Sidebar from '@/app/(admin)/_components/sidebar';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { Button } from './ui/button';
 import { Menu } from 'lucide-react';
-import Link from 'next/link';
+import Logo from '@/components/logo';
 
 const AdminMobileToggle = () => {
   return (
@@ -16,9 +16,7 @@ const AdminMobileToggle = () => {
       </SheetTrigger>
       <SheetContent side="left">
         <div className="space-y-4">
-          <Link href={'/'} className="text-2xl font-bold">
-            BoSS
-          </Link>
+          <Logo />
           <Sidebar />
         </div>
       </SheetContent>

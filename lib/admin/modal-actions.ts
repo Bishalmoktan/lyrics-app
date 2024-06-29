@@ -57,13 +57,33 @@ export const deleteArtist = async (data: IArtist) => {
  */
 export const deleteUser = async (data: IUser) => {
   try {
+    const adminUser = await db.user.findFirst({
+      where: {
+        role: 'ADMIN',
+      },
+    });
+
+    if (!adminUser) {
+      throw new Error('No admin user found');
+    }
+
+    await db.song.updateMany({
+      where: {
+        userId: data.id,
+      },
+      data: {
+        userId: adminUser.id,
+      },
+    });
+
     const user = await db.user.delete({
       where: {
         id: data.id,
       },
     });
+
     return {
-      msg: `${user.name} is successfully deleted`,
+      msg: `${user.name} is successfully deleted, and their songs have been transferred to the admin.`,
     };
   } catch (error: any) {
     console.log(error);
@@ -72,7 +92,7 @@ export const deleteUser = async (data: IUser) => {
 };
 
 /**
- * Updates Artist
+ * Updates User
  * @param data @type {IArtist}
  * @returns @type {string}
  */
@@ -110,8 +130,7 @@ export const updateUser = async (data: IUser, role: UserRole) => {
       msg: `${user.name} is successfully updated`,
     };
   } catch (error: any) {
-    console.log(error);
-    throw new Error(error.message);
+    throw error;
   }
 };
 

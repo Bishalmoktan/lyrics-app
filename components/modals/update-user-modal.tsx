@@ -36,7 +36,7 @@ const UpdateUserModal = () => {
       if (data.user && role) {
         if (role === data.user?.role) {
           throw new Error(`${role} is already the current role`);
-        }
+        } 
         const res = await updateUser(data.user, role);
         toast.success(res.msg);
         router.refresh();
@@ -44,7 +44,8 @@ const UpdateUserModal = () => {
         throw new Error(`User doesn't exists`);
       }
     } catch (error: any) {
-      toast.error(error.message);
+      console.error('Error in handleSave:', error);
+      toast.error(error.message || 'An unexpected error occurred');
     } finally {
       handleClose();
       setLoading(false);
