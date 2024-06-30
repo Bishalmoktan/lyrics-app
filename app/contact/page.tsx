@@ -1,5 +1,10 @@
+import { Metadata } from 'next';
 import Form from './_components/form';
 import Header from './_components/header';
+
+export const metadata: Metadata = {
+  title: "Contact"
+}
 
 const ContactPage = () => {
   return (
