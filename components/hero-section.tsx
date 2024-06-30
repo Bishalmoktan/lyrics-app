@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Button } from './ui/button';
+import Link from 'next/link';
 
 const HeroSection = () => {
   return (
@@ -27,7 +28,9 @@ const HeroSection = () => {
               BISARIC, your portal to the lyrical world of music!
             </p>
           </div>
-          <Button className="w-max">Explore</Button>
+          <Button className="w-max">
+            <Link href={"/search?songs=featured"}>Explore</Link>
+          </Button>
         </div>
       </div>
     </div>
