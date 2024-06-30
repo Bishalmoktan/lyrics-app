@@ -21,9 +21,9 @@ import { Upload } from 'lucide-react';
 
 import 'react-quill/dist/quill.snow.css';
 import Image from 'next/image';
-import { createArtist } from '@/lib/admin/actions';
+import { updateArtist, getArtistById } from '@/lib/admin/actions';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export const formSchema = z.object({
   name: z.string().min(1, {
@@ -34,7 +34,7 @@ export const formSchema = z.object({
   }),
 });
 
-export function AddArtistForm() {
+export function UpdateArtistForm() {
   const [avatar, setAvatar] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -48,7 +48,24 @@ export function AddArtistForm() {
   });
   const router = useRouter();
 
-  
+  const params = useSearchParams();
+  const artistId = params.get('artistId');
+
+  useEffect(() => {
+    const getArtist = async () => {
+      if (artistId) {
+        try {
+          const artist = await getArtistById(artistId);
+          form.setValue('name', artist?.name || '');
+          form.setValue('designation', artist?.designation || '');
+          setAvatar(artist?.avatar_url || '');
+        } catch (error: any) {
+          toast.error(error.message);
+        }
+      }
+    };
+    getArtist();
+  }, [artistId]);
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -57,14 +74,17 @@ export function AddArtistForm() {
       return;
     }
     try {
+      if (artistId) {
         setLoading(true);
-        const res = await createArtist({
+        const res = await updateArtist(artistId, {
+          avatar_url: avatar,
           ...values,
-          avatar
         });
         toast.success(res.msg);
         router.push('/admin/artists');
-      
+      } else {
+        throw new Error('Artist id not found.');
+      }
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -95,7 +115,7 @@ export function AddArtistForm() {
                 />
               </FormControl>
               <FormDescription>
-                  Enter name of the artist.
+                Update  name of the artist.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -117,7 +137,7 @@ export function AddArtistForm() {
                 />
               </FormControl>
               <FormDescription>
-                  Enter the designation that suits the
+                Update the designation that suits the
                 artist.
               </FormDescription>
               <FormMessage />
@@ -145,7 +165,7 @@ export function AddArtistForm() {
                   className="cursor-pointer text-gray-300"
                 >
                   <Upload className="size-16" />
-                  <p>Upload image</p>
+                  <p>Update image</p>
                 </div>
               );
             }}
@@ -167,7 +187,7 @@ export function AddArtistForm() {
           type="submit"
           className="bg-rose-500 hover:bg-rose-700 text-white hover:text-white"
         >
-          Create
+         Update
         </Button>
       </form>
     </Form>
