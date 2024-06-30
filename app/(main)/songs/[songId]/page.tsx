@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import SongSection from '@/components/song/song-section';
 import { getSongDetail } from '@/lib/public-actions/actions';
 import { notFound } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 const getSong = cache(async(postId: string) => {
   const song = await getSongDetail(postId);
@@ -47,9 +48,9 @@ const SongLyricsPage = async ({ params }: { params: { songId: string } }) => {
   }
   return (
     <div className="space-y-8">
-      <div className="w-max">
-        <h1 className="text-3xl md:text-6xl font-bold">{song?.title}</h1>
-        <p className="text-right text-md text-zinc-300">{song?.Artist.name}</p>
+      <div>
+        <h1 className={cn('text-3xl font-bold', song.title.length < 30 ? 'md:text-6xl': 'text-2xl text:5xl')}>{song?.title}</h1>
+        <p className="text-md text-zinc-300">{song?.Artist.name}</p>
       </div>
       <SongSection {...song} />
     </div>

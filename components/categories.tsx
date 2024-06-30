@@ -7,9 +7,11 @@ const Categories = async () => {
   const categories = await getAllGenre();
   return (
     <div className="space-y-4">
-      <h3 className="text-2xl">Categories</h3>
+      <h3 className="text-2xl text-green">Categories</h3>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {categories.map((category) => (
+        {categories.map((category) => {
+          
+          return (
           <Link
             href={`/search?type=${category.name}`}
             key={category.id}
@@ -25,7 +27,7 @@ const Categories = async () => {
 
             <p className="text-lg"> {category.name} </p>
           </Link>
-        ))}
+        )})}
       </div>
     </div>
   );

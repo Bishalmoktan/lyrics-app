@@ -6,6 +6,7 @@ import ArtistTile from '@/components/artist-tile';
 import { ReadMore } from '@/components/song/read-more';
 import { ILyricsJson, formSchema } from '../create/_components/form';
 import { Artist } from '@prisma/client';
+import { cn } from '@/lib/utils';
 
 type previewProps = z.infer<typeof formSchema>;
 
@@ -33,14 +34,12 @@ const Preview = ({
       break;
     }
   }
-
   
-
   return (
     <>
-      <div className="w-max">
-        <h1 className="text-3xl md:text-6xl font-bold">{title}</h1>
-        <p className="text-right text-md text-zinc-300">{artist?.name}</p>
+      <div>
+        <h1 className={cn('text-3xl font-bold', title.length < 30 ? 'md:text-6xl': 'text-2xl text:5xl')}>{title}</h1>
+        <p className="text-md text-zinc-300">{artist?.name}</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="relative h-full md:h-[50vh]">

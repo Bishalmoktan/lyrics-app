@@ -1,5 +1,5 @@
 import { Separator } from '@/components/ui/separator';
-import { AddArtistForm } from '../_components/form';
+import { UpdateArtistForm } from '../_components/update-form';
 
 const ArtistUpdatePage = () => {
   return (
@@ -9,7 +9,7 @@ const ArtistUpdatePage = () => {
         <p className="text-zinc-500">Update an existing artist!</p>
       </div>
       <Separator className="bg-zinc-300" />
-      <AddArtistForm />
+      <UpdateArtistForm />
     </div>
   );
 };
