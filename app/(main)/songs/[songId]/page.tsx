@@ -1,7 +1,7 @@
 import { cache } from 'react';
 import { Metadata } from 'next';
 import SongSection from '@/components/song/song-section';
-import { getFeaturedSongs, getSongDetail } from '@/lib/public-actions/actions';
+import { getSongDetail } from '@/lib/public-actions/actions';
 import { notFound } from 'next/navigation';
 
 const getSong = cache(async(postId: string) => {
@@ -9,10 +9,6 @@ const getSong = cache(async(postId: string) => {
   return song
 })
 
-export async function generateStaticParams() {
-    const songs = await getFeaturedSongs();
-    return songs.map(({id}) => id);
-}
 
 export async function generateMetadata({ 
   params }: { params: { songId: string }
