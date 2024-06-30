@@ -12,8 +12,8 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.bisaric.com"),
 
   title: {
-    template: "%s | BISARIC",
-    default: "BISARIC",
+    template: "%s | Bisaric",
+    default: "Bisaric",
   },
   authors: {
     name: "BISARIC",
@@ -21,16 +21,14 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
-
   description:
     "Created with a vision to create a community-driven platform where users could not only access lyrics but also engage with them in meaningful ways. What started as a passion project has now evolved into a thrivingˀ ecosystem of music enthusiasts, artists, and lyric aficionados.",
   openGraph: {
-    title: "Bishal Moktan",
+    title: "Bisaric",
     description:
       "Created with a vision to create a community-driven platform where users could not only access lyrics but also engage with them in meaningful ways. What started as a passion project has now evolved into a thrivingˀ ecosystem of music enthusiasts, artists, and lyric aficionados.",
     url: "https://www.bisaric.com",
-    siteName: "Bishal Moktan",
-    images: "/og.png",
+    siteName: "Bisaric",
     type: "website",
   },
   keywords: ["nepali lyrics", "lyrics of nepali songs", "nepali songs", "new nepali songs"],
