@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AppContextProvider } from "@/components/providers/app-context-provider";
 import { GoogleAnalytics } from '@next/third-parties/google'
 import NextTopLoader from "nextjs-toploader"
+import { Toaster } from "sonner";
 
 const font = Space_Grotesk({ subsets: ["latin"] });
 
@@ -62,6 +63,7 @@ export default function RootLayout({
           defaultTheme="dark"
           disableTransitionOnChange
         >
+            <Toaster richColors />
           <AppContextProvider>{children}</AppContextProvider>
         </ThemeProvider>
         <GoogleAnalytics gaId="G-CBNDLKKS18" />
