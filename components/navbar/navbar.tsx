@@ -5,6 +5,7 @@ import { MobileToggle } from '../mobile-toggle';
 import { auth } from '@/auth';
 import { getAllGenre } from '@/lib/admin/actions';
 import Logo from '@/components/logo';
+import Avatar from './avatar';
 
 const Navbar = async () => {
   const session = await auth();
@@ -20,9 +21,11 @@ const Navbar = async () => {
           <div className="w-[300px] flex-shrink-0">
             <SearchBox genres={genres} />
           </div>
-          <div>
+        <Avatar session={session} />
+          {/* Removing Temporarily  */}
+          {/* <div>
             <Socials />
-          </div>
+          </div> */}
         </div>
       </div>
       {/* mobile view  */}
@@ -33,9 +36,10 @@ const Navbar = async () => {
         <div className="w-[150px] md:w-[300px] flex-shrink-0">
           <SearchBox genres={genres} />
         </div>
-        <div>
+          {/* Removing Temporarily  */}
+        {/* <div>
           <Socials />
-        </div>
+        </div> */}
       </div>
     </>
   );

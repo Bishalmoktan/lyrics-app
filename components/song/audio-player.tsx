@@ -70,7 +70,7 @@ const CustomMusicPlayer: React.FC<{ songId: string }> = ({ songId }) => {
       <div className="backdrop-blur-md rounded-md p-2">
       <input
         type="range"
-        className="w-[300px] md:w-[400px] accent-rose-500"
+        className="w-[280px] md:w-[400px] accent-rose-500"
         value={currentTime}
         min={0}
         max={duration}

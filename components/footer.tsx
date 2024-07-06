@@ -15,7 +15,8 @@ const Footer = async () => {
       <Logo />
       <div className="flex flex-col md:flex-row justify-between gap-4">
         <Routes session={session} />
-        <div className="space-y-4">
+        {/* Removing Temporarily */}
+        {/* <div className="space-y-4">
           <Socials />
           <div className="flex gap-2 items-center">
             <Image src={envelope} alt="Envelope" className="size-8" />
@@ -23,7 +24,7 @@ const Footer = async () => {
               bisaric@gmail.com
             </Link>
           </div>
-        </div>
+        </div> */}
       </div>
       <Separator className="bg-zinc-300" />
       <div className="pb-4 md:pb-8 text-center">
