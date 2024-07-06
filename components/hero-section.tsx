@@ -5,7 +5,7 @@ import Link from 'next/link';
 const HeroSection = () => {
   return (
     <div className="space-y-6 my-8 animate-move-up">
-      <h1 className="text-5xl md:max-w-[50vw] text-center md:text-left font-bold">
+      <h1 className="text-3xl md:text-5xl md:max-w-[50vw] text-center md:text-left font-bold">
         Discover the Music Behind the Words
       </h1>
       <div className="flex flex-col md:flex-row gap-8">
@@ -19,7 +19,7 @@ const HeroSection = () => {
         </div>
         <div className="flex-1 p-4 flex flex-col justify-center gap-4">
           <div>
-            <h3 className="text-2xl font-bold">
+            <h3 className="text-xl md:text-2xl font-bold">
               Uncover the Stories Behind the Songs
             </h3>
             <p>

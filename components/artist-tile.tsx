@@ -16,7 +16,7 @@ const ArtistTile = ({ artist }: { artist: Artist }) => {
         className="size-20 rounded-full"
       />
       <div>
-        <h4 className="text-lg font-bold md:text-2xl">{artist.name}</h4>
+        <h4 className="text-lg font-bold md:text-2xl line-clamp-1">{artist.name}</h4>
         <p className="text-zinc-300">{artist.designation}</p>
       </div>
     </Link>

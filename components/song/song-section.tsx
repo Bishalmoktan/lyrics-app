@@ -7,7 +7,6 @@ import Songs from '../songs';
 import CustomMusicPlayer from './audio-player';
 import { ISongDetail } from '@/lib/public-actions/actions';
 import { getCurrentUser } from '@/lib/admin/actions';
-import {  JsonArray } from '@prisma/client/runtime/library';
 
 
 const SongSection = async ({
