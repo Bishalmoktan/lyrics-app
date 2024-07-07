@@ -3,9 +3,8 @@
 import { cn } from '@/lib/utils';
 import { routes } from '@/routes';
 import { UserRole } from '@prisma/client';
-import { LogIn, LogOut, ShieldCheck } from 'lucide-react';
+import { LogIn, ShieldCheck } from 'lucide-react';
 import { Session } from 'next-auth';
-import { signOut } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -17,9 +16,6 @@ const MobileRoutes = ({ session }: { session: Session | null }) => {
     session?.user.role === UserRole.ADMIN ||
     session?.user.role === UserRole.MODERATOR;
   const isLoggedIn = !!session;
-  const handleSignOut = async () => {
-    await signOut();
-  };
   return (
     <div className="p-4 space-y-8">
       <div className='w-24'>
@@ -60,20 +56,7 @@ const MobileRoutes = ({ session }: { session: Session | null }) => {
           </Link>
         )}
 
-        {isLoggedIn ? (
-          <div
-            className={cn(
-              'w-[50vw] rounded-md p-2 flex gap-8 hover:bg-brand-light cursor-pointer'
-            )}
-          >
-            <div>
-              <LogOut className="size-8" />
-            </div>
-            <p className="text-lg" onClick={handleSignOut}>
-              {'Logout'}
-            </p>
-          </div>
-        ) : (
+        {!isLoggedIn && (
           <Link
             href={'/login'}
             className={cn(
