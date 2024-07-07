@@ -36,6 +36,8 @@ const Navbar = async () => {
         <div className="w-[150px] md:w-[300px] flex-shrink-0">
           <SearchBox genres={genres} />
         </div>
+        <Avatar session={session} />
+
           {/* Removing Temporarily  */}
         {/* <div>
           <Socials />
