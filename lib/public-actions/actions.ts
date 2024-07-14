@@ -12,14 +12,25 @@ interface songTileProps extends Song {
  * Server action to get all the songs
  * @returns {songTileProps[]}
  */
-export const getAllSongs = async () => {
+export const getAllSongs = async (page: number = 1, pageSize: number = 10) => {
   try {
+    const skip = (page - 1) * pageSize;
     const res = await db.song.findMany({
+      skip: skip,
+      take: pageSize,
       include: {
         Artist: true,
       },
     });
-    return res as songTileProps[];
+
+    const totalSongs = await db.song.count();
+
+    return {
+      songs: res as songTileProps[],
+      totalSongs,
+      totalPages: Math.ceil(totalSongs / pageSize),
+      currentPage: page,
+    };
   } catch (error) {
     console.log(error);
     throw new Error('Error getting the songs');
@@ -185,9 +196,11 @@ export const deleteComment = async (id: string, userId: string) => {
 /**
  * A server action to get song by genre
  */
-export const getSongsByGenre = async (genre: string) => {
+export const getSongsByGenre = async (genre: string, page: number = 1, pageSize: number = 10) => {
   try {
-    const song = await db.song.findMany({
+    const skip = (page - 1) * pageSize;
+
+    const songs = await db.song.findMany({
       where: {
         genres: {
           some: {
@@ -195,12 +208,29 @@ export const getSongsByGenre = async (genre: string) => {
           },
         },
       },
+      skip: skip,
+      take: pageSize,
       include: {
         Artist: true,
       },
     });
 
-    return song as songTileProps[];
+    const totalSongs = await db.song.count({
+      where: {
+        genres: {
+          some: {
+            name: genre,
+          },
+        },
+      },
+    });
+
+    return {
+      songs: songs as songTileProps[],
+      totalSongs,
+      totalPages: Math.ceil(totalSongs / pageSize),
+      currentPage: page,
+    };
   } catch (error: any) {
     console.log(error);
     throw new Error(error.message);
@@ -210,23 +240,39 @@ export const getSongsByGenre = async (genre: string) => {
 /**
  * A server action to get song by artist
  */
-export const getSongsByArtist = async (artistId: string) => {
+export const getSongsByArtist = async (artistId: string, page: number = 1, pageSize: number = 10) => {
   try {
-    const song = await db.song.findMany({
+    const skip = (page - 1) * pageSize;
+
+    const songs = await db.song.findMany({
       where: {
         artistId,
       },
+      skip: skip,
+      take: pageSize,
       include: {
         Artist: true,
       },
     });
 
-    return song as songTileProps[];
+    const totalSongs = await db.song.count({
+      where: {
+        artistId,
+      },
+    });
+
+    return {
+      songs: songs as songTileProps[],
+      totalSongs,
+      totalPages: Math.ceil(totalSongs / pageSize),
+      currentPage: page,
+    };
   } catch (error: any) {
     console.log(error);
     throw new Error(error.message);
   }
 };
+
 
 /**
  * A server action to search song by name or lyrics

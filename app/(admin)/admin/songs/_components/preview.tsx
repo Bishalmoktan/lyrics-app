@@ -60,7 +60,7 @@ const Preview = ({
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="">
-          <div className="space-y-6">
+          <div className="space-y-6 pointer-events-none" >
             {artist && (
               <ArtistTile
                 artist={{
