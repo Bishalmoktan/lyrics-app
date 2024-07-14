@@ -29,7 +29,7 @@ const HeroSection = () => {
             </p>
           </div>
           <Button className="w-max">
-            <Link href={"/search?songs=featured"}>Explore</Link>
+            <Link href={"/search?songs=all"}>Explore</Link>
           </Button>
         </div>
       </div>

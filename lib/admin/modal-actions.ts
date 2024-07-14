@@ -99,11 +99,16 @@ export const deleteUser = async (data: IUser) => {
 export const updateUser = async (data: IUser, role: UserRole) => {
   try {
     const session = await getCurrentUser();
-    if (session?.user.role === 'USER') {
+
+    if (!session) {
+      throw new Error('Not authenticated');
+    }
+
+    if (session.user.role === 'USER') {
       throw new Error('You cannot perform this action');
     }
 
-    if (data.id === session?.user.id) {
+    if (data.id === session.user.id) {
       throw new Error('You cannot update yourself');
     }
 
@@ -111,13 +116,14 @@ export const updateUser = async (data: IUser, role: UserRole) => {
       throw new Error('You cannot update an admin.');
     }
 
-    if (data.role === 'MODERATOR' && session?.user.role === 'MODERATOR') {
+    if (role === 'ADMIN' && session.user.role !== 'ADMIN') {
       throw new Error('You must be an admin to perform this action');
     }
 
-    if (role === 'ADMIN' && session?.user.role !== 'ADMIN') {
+    if (role === 'MODERATOR' && session.user.role === 'MODERATOR') {
       throw new Error('You must be an admin to perform this action');
     }
+
     const user = await db.user.update({
       where: {
         id: data.id,
@@ -126,13 +132,15 @@ export const updateUser = async (data: IUser, role: UserRole) => {
         role,
       },
     });
+
     return {
       msg: `${user.name} is successfully updated`,
     };
   } catch (error: any) {
-    throw error;
-  }
+    console.log(error)
+     throw new Error(error.message)
 };
+}
 
 /**
  * Toggle feature song

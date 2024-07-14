@@ -33,16 +33,22 @@ const UpdateUserModal = () => {
   const handleSave = async () => {
     try {
       setLoading(true);
-      if (data.user && role) {
-        if (role === data.user?.role) {
-          throw new Error(`${role} is already the current role`);
-        } 
-        const res = await updateUser(data.user, role);
-        toast.success(res.msg);
-        router.refresh();
-      } else {
-        throw new Error(`User doesn't exists`);
+      
+      if (!data.user) {
+        throw new Error("User doesn't exist");
       }
+      
+      if (!role) {
+        throw new Error("Role is not selected");
+      }
+      
+      if (role === data.user.role) {
+        throw new Error(`${role} is already the current role`);
+      }
+  
+      const res = await updateUser(data.user, role);
+      toast.success(res.msg);
+      router.refresh();
     } catch (error: any) {
       console.error('Error in handleSave:', error);
       toast.error(error.message || 'An unexpected error occurred');
@@ -51,7 +57,7 @@ const UpdateUserModal = () => {
       setLoading(false);
     }
   };
-
+  
   useEffect(() => {
     if (data.user) {
       setRole(data.user?.role);
