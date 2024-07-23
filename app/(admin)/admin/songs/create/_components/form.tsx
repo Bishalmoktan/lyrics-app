@@ -50,6 +50,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Preview from '../../_components/preview';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export const formSchema = z.object({
   title: z.string().min(1, {
@@ -296,7 +297,9 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
                           Create Artist
                         </Link>
                       </CommandEmpty>
+                        <ScrollArea>
                       <CommandList>
+
                         {artists.map((artist) => (
                           <CommandItem
                             value={artist.name}
@@ -316,7 +319,9 @@ export function AddSongForm({ artists, genres }: AddSongFormProps) {
                             <span> {artist.name}</span>
                           </CommandItem>
                         ))}
+
                       </CommandList>
+                        </ScrollArea>
                     </Command>
                   </PopoverContent>
                 </Popover>
