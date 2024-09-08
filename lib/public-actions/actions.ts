@@ -1,20 +1,39 @@
-'use server';
+"use server";
 
-import { Artist, Genre, Song, User } from '@prisma/client';
-import { db } from '../db';
-import { auth } from '@/auth';
+import { Artist, Genre, Song, User } from "@prisma/client";
+import { db } from "../db";
+import { auth } from "@/auth";
+import { redis } from "@/redis/redis";
+import { keys } from "@/redis/keys";
+import { cacheKey, paginatedCacheKey } from "@/redis/utils";
 
 interface songTileProps extends Song {
   Artist: Artist;
 }
 
+interface paingatedSongs {
+  songs: songTileProps[];
+  totalSongs: number;
+  totalPages: number;
+  currentPage: number;
+}
+
 /**
  * Server action to get all the songs
- * @returns {songTileProps[]}
+ * @returns {paingatedSongs}
  */
 export const getAllSongs = async (page: number = 1, pageSize: number = 10) => {
   try {
     const skip = (page - 1) * pageSize;
+
+    const cachedSongs = await redis.get(
+      paginatedCacheKey("songs", page, pageSize)
+    );
+
+    if (cachedSongs) {
+      return JSON.parse(cachedSongs) as paingatedSongs;
+    }
+
     const res = await db.song.findMany({
       skip: skip,
       take: pageSize,
@@ -25,15 +44,24 @@ export const getAllSongs = async (page: number = 1, pageSize: number = 10) => {
 
     const totalSongs = await db.song.count();
 
-    return {
+    const response = {
       songs: res as songTileProps[],
       totalSongs,
       totalPages: Math.ceil(totalSongs / pageSize),
       currentPage: page,
     };
+
+    if (res && response) {
+      await redis.set(
+        paginatedCacheKey("songs", page, pageSize),
+        JSON.stringify(response)
+      );
+    }
+
+    return response;
   } catch (error) {
     console.log(error);
-    throw new Error('Error getting the songs');
+    throw new Error("Error getting the songs");
   }
 };
 
@@ -43,6 +71,12 @@ export const getAllSongs = async (page: number = 1, pageSize: number = 10) => {
  */
 export const getFeaturedSongs = async () => {
   try {
+    const cachedFeaturedSongs = await redis.get(keys.FEATURED_SONG);
+
+    if (cachedFeaturedSongs) {
+      return JSON.parse(cachedFeaturedSongs) as songTileProps[];
+    }
+
     const res = await db.song.findMany({
       where: {
         isFeatured: true,
@@ -51,10 +85,13 @@ export const getFeaturedSongs = async () => {
         Artist: true,
       },
     });
+
+    await redis.set(keys.FEATURED_SONG, JSON.stringify(res));
+
     return res as songTileProps[];
   } catch (error) {
     console.log(error);
-    throw new Error('Error getting the songs');
+    throw new Error("Error getting the songs");
   }
 };
 
@@ -64,15 +101,24 @@ export const getFeaturedSongs = async () => {
  */
 export const getFeaturedArtists = async () => {
   try {
+    const cachedFeaturedArtists = await redis.get(keys.FEATURED_ARTIST);
+
+    if (cachedFeaturedArtists) {
+      return JSON.parse(cachedFeaturedArtists) as Artist[];
+    }
+
     const res = await db.artist.findMany({
       where: {
         isFeatured: true,
       },
     });
+
+    await redis.set(keys.FEATURED_ARTIST, JSON.stringify(res));
+
     return res;
   } catch (error) {
     console.log(error);
-    throw new Error('Error getting the artists');
+    throw new Error("Error getting the artists");
   }
 };
 
@@ -87,6 +133,11 @@ export interface ISongDetail extends Song {
 }
 export const getSongDetail = async (id: string) => {
   try {
+    const cachedSongDetail = await redis.get(cacheKey("song", id));
+
+    if (cachedSongDetail) {
+      return JSON.parse(cachedSongDetail) as ISongDetail;
+    }
     const res = await db.song.findUnique({
       where: {
         id,
@@ -97,10 +148,14 @@ export const getSongDetail = async (id: string) => {
         genres: true,
       },
     });
+
+    if (res) {
+      await redis.set(cacheKey("song", id), JSON.stringify(res));
+    }
     return res as ISongDetail;
   } catch (error) {
     console.log(error);
-    throw new Error('Error getting the song');
+    throw new Error("Error getting the song");
   }
 };
 
@@ -117,7 +172,7 @@ export const postComment = async (data: IPostComment) => {
   try {
     const session = await auth();
     if (!session) {
-      throw new Error('You must be logged in to post comments');
+      throw new Error("You must be logged in to post comments");
     }
     await db.comment.create({
       data: {
@@ -127,7 +182,7 @@ export const postComment = async (data: IPostComment) => {
       },
     });
     return {
-      msg: 'Successfully posted your thoughts!',
+      msg: "Successfully posted your thoughts!",
     };
   } catch (error: any) {
     console.log(error);
@@ -174,10 +229,10 @@ export const deleteComment = async (id: string, userId: string) => {
       },
     });
     if (!comment) {
-      throw new Error('Comment ID missing');
+      throw new Error("Comment ID missing");
     }
     if (session?.user.id !== userId) {
-      throw new Error('You cannot perform this action');
+      throw new Error("You cannot perform this action");
     }
     await db.comment.delete({
       where: {
@@ -185,7 +240,7 @@ export const deleteComment = async (id: string, userId: string) => {
       },
     });
     return {
-      msg: 'Comment deleted successfully!',
+      msg: "Comment deleted successfully!",
     };
   } catch (error: any) {
     console.log(error);
@@ -196,11 +251,22 @@ export const deleteComment = async (id: string, userId: string) => {
 /**
  * A server action to get song by genre
  */
-export const getSongsByGenre = async (genre: string, page: number = 1, pageSize: number = 10) => {
+export const getSongsByGenre = async (
+  genre: string,
+  page: number = 1,
+  pageSize: number = 10
+) => {
   try {
     const skip = (page - 1) * pageSize;
+    const cachedSongs = await redis.get(
+      paginatedCacheKey(genre, page, pageSize)
+    );
 
-    const songs = await db.song.findMany({
+    if (cachedSongs) {
+      return JSON.parse(cachedSongs) as paingatedSongs;
+    }
+
+    const res = await db.song.findMany({
       where: {
         genres: {
           some: {
@@ -225,12 +291,21 @@ export const getSongsByGenre = async (genre: string, page: number = 1, pageSize:
       },
     });
 
-    return {
-      songs: songs as songTileProps[],
+    const response = {
+      songs: res as songTileProps[],
       totalSongs,
       totalPages: Math.ceil(totalSongs / pageSize),
       currentPage: page,
     };
+
+    if (res && response) {
+      await redis.set(
+        paginatedCacheKey(genre, page, pageSize),
+        JSON.stringify(response)
+      );
+    }
+
+    return response;
   } catch (error: any) {
     console.log(error);
     throw new Error(error.message);
@@ -240,11 +315,23 @@ export const getSongsByGenre = async (genre: string, page: number = 1, pageSize:
 /**
  * A server action to get song by artist
  */
-export const getSongsByArtist = async (artistId: string, page: number = 1, pageSize: number = 10) => {
+export const getSongsByArtist = async (
+  artistId: string,
+  page: number = 1,
+  pageSize: number = 10
+) => {
   try {
     const skip = (page - 1) * pageSize;
 
-    const songs = await db.song.findMany({
+    const cachedSongs = await redis.get(
+      paginatedCacheKey(artistId, page, pageSize)
+    );
+
+    if (cachedSongs) {
+      return JSON.parse(cachedSongs) as paingatedSongs;
+    }
+
+    const res = await db.song.findMany({
       where: {
         artistId,
       },
@@ -261,18 +348,26 @@ export const getSongsByArtist = async (artistId: string, page: number = 1, pageS
       },
     });
 
-    return {
-      songs: songs as songTileProps[],
+    const response = {
+      songs: res as songTileProps[],
       totalSongs,
       totalPages: Math.ceil(totalSongs / pageSize),
       currentPage: page,
     };
+
+    if (res && response) {
+      await redis.set(
+        paginatedCacheKey(artistId, page, pageSize),
+        JSON.stringify(response)
+      );
+    }
+
+    return response;
   } catch (error: any) {
     console.log(error);
     throw new Error(error.message);
   }
 };
-
 
 /**
  * A server action to search song by name or lyrics
@@ -282,9 +377,7 @@ export const searchSongsByName = async (query: string) => {
     const results = await db.song.findMany({
       take: 20,
       where: {
-        OR: [
-          { title: { contains: query, mode: 'insensitive' } },
-        ],
+        OR: [{ title: { contains: query, mode: "insensitive" } }],
       },
       include: {
         Artist: true,
@@ -307,7 +400,7 @@ export const searchArtistByName = async (query: string) => {
       where: {
         name: {
           contains: query,
-          mode: 'insensitive',
+          mode: "insensitive",
         },
       },
     });

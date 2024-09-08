@@ -42,7 +42,7 @@ import {
 } from "@/components/ui/multi-select";
 
 import "react-quill/dist/quill.snow.css";
-import { getSongDetail, updateSong } from "@/lib/admin/actions";
+import {  updateSong } from "@/lib/admin/actions";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
 import { Artist, Genre } from "@prisma/client";
@@ -52,6 +52,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Preview from "../../_components/preview";
 import { ILyricsJson } from "../../create/_components/form";
 import { JsonArray } from "@prisma/client/runtime/library";
+import { getSongDetail } from "@/lib/public-actions/actions";
 
 export const formSchema = z.object({
   title: z.string().min(1, {
@@ -204,11 +205,9 @@ export function UpdateSongForm({ artists, genres }: UpdateSongFormProps) {
         const lyrics = res?.lyrics as ILyricsJson[];
         const { lyricsHTML, timestamps } =
         convertLyricsToHTMLWithTimestamps(lyrics);
-        console.log(lyricsHTML)
         // TODO: FIX TYPESCRIPT ERROR
         // @ts-ignore
         const nepaliLyrics = res?.nepaliLyrics as ILyricsJson[];
-        console.log(nepaliLyrics)
         const { lyricsHTML: nepaliLyricsHtml } =
           convertLyricsToHTMLWithTimestamps(nepaliLyrics);
           
