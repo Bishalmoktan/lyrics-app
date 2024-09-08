@@ -6,6 +6,10 @@ import { z } from 'zod';
 import { db } from '../db';
 import { auth } from '@/auth';
 import { Song } from '@/app/(admin)/admin/songs/columns';
+import { redis } from '@/redis/redis';
+import { keys } from '@/redis/keys';
+import { Genre } from '@prisma/client';
+import { cacheKey, deletePaginatedSongCache } from '@/redis/utils';
 
 type postSongData = z.infer<typeof formSchema>;
 
@@ -65,6 +69,9 @@ export const postSong = async (data: IPostSongData) => {
       },
     });
 
+    await deletePaginatedSongCache();
+    await redis.del(keys.FEATURED_SONG);
+
     return {
       msg: 'Song added successfully!',
     };
@@ -111,6 +118,9 @@ export const updateSong = async (data: IPostSongData) => {
       },
     });
 
+    await deletePaginatedSongCache();
+    await redis.del(keys.FEATURED_SONG);
+
     return {
       msg: 'Song updated successfully!',
     };
@@ -146,6 +156,9 @@ export const createArtist = async (data: ICreateArtistData) => {
         avatar_url: data.avatar,
       },
     });
+
+    await redis.del(keys.ALL_ARTISTS)
+    await redis.del(keys.FEATURED_SONG)
 
     return {
       msg: 'Artist created successfully!',
@@ -185,6 +198,9 @@ export const createGenre = async (data: ICreateGenre) => {
         image,
       },
     });
+
+    await redis.del(keys.ALL_GENRE)
+
     return {
       msg: 'Genre created successfully!',
     };
@@ -277,7 +293,14 @@ export const updateArtist = async (
  */
 export const getAllGenre = async () => {
   try {
+    const cachedGenre = await redis.get(keys.ALL_GENRE);
+    if(cachedGenre){
+      return JSON.parse(cachedGenre) as Genre[];
+    }
     const res = await db.genre.findMany({});
+    if(res){
+      await redis.set(keys.ALL_GENRE, JSON.stringify(res));
+    }
     return res;
   } catch (error: any) {
     throw new Error(error.message);
@@ -328,37 +351,7 @@ export const getAllSongs = async () => {
     throw new Error('Error getting the songs');
   }
 };
-/**
- * A server action that returns all the songs
- * Takes id as a parameter @type {string}
- */
-export const getSongDetail = async (id: string) => {
-  try {
-    const res = await db.song.findUnique({
-      where: {
-        id,
-      },
-      select: {
-        id: true,
-        Artist: true,
-        title: true,
-        User: true,
-        genres: true,
-        lyrics: true,
-        story: true,
-        songId: true,
-        thumbnail: true,
-        userId: true,
-        duration: true,
-        nepaliLyrics: true
-      },
-    });
-    return res;
-  } catch (error) {
-    console.log(error);
-    throw new Error('Error getting the song');
-  }
-};
+
 
 /**
  * Get current User

@@ -50,7 +50,6 @@ const SearchResultPage = async ({
     link = `artistId/${artistId}`;
   }
 
-  console.log(searchParams);
 
   const generatePaginationLinks = () => {
     let links = [];

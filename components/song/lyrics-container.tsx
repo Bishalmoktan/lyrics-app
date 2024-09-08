@@ -23,7 +23,6 @@ const LyricsContainer = ({
   nepaliLyrics: ILyricsJson[] | null;
 }) => {
   const [syncLyrics, setSyncLyrics] = useState<boolean>(true);
-  console.log(syncLyrics)
   return (
     <div className="relative">
       <Tabs defaultValue="english" className="">
