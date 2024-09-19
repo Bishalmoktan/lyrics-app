@@ -21,7 +21,6 @@ import {
 import { Artist, Genre } from '@prisma/client';
 import SongTile, { songTileProps } from '../song-tile';
 import Link from 'next/link';
-import { categories } from '@/data/categorires';
 import Image from 'next/image';
 import ArtistTile from '../artist-tile';
 

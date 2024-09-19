@@ -20,4 +20,14 @@ export const deletePaginatedSongCache = async () => {
   }
 };
 
+export const deleteSongDetail = async () => {
+  try {
+    const keys = await redis.keys(`song:*`);
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
+  } catch (error) {
+    console.log("Error deleting song cache:", error);
+  }
+}
 
