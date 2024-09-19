@@ -3,6 +3,10 @@ import { redis } from "./redis";
 export const cacheKey = (prefix: string, id: string) =>
   `${prefix}:${id}`;
 
+export const deleteCache = async (prefix: string, id: string) => {
+  await redis.del(`${prefix}:${id}`)
+};
+
 export const paginatedCacheKey = (
   prefix: string,
   page: number,

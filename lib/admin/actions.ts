@@ -9,7 +9,7 @@ import { Song } from '@/app/(admin)/admin/songs/columns';
 import { redis } from '@/redis/redis';
 import { keys } from '@/redis/keys';
 import { Genre } from '@prisma/client';
-import { cacheKey, deletePaginatedSongCache } from '@/redis/utils';
+import { cacheKey, deleteCache, deletePaginatedSongCache } from '@/redis/utils';
 
 type postSongData = z.infer<typeof formSchema>;
 
@@ -120,7 +120,9 @@ export const updateSong = async (data: IPostSongData) => {
 
     await deletePaginatedSongCache();
     await redis.del(keys.FEATURED_SONG);
-
+    if(id){
+      await deleteCache("song", id);
+    }
     return {
       msg: 'Song updated successfully!',
     };
