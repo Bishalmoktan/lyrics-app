@@ -21,7 +21,7 @@ const SongTile = ({ song }: { song: songTileProps }) => {
       />
       <div className="w-56">
         <h4 className="text-lg md:text-2xl line-clamp-1">{song.title}</h4>
-        <p className="text-zinc-300 line-clamp-1">{song.Artist.name}</p>
+        <p className="text-zinc-300 line-clamp-1">{song.Artist?.name}</p>
       </div>
       <div className="text-zinc-300 text-xs md:text-sm">{song.duration}</div>
     </Link>

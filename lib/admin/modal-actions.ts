@@ -6,6 +6,9 @@ import { IUser } from '@/app/(admin)/admin/users/columns';
 import { db } from '@/lib/db';
 import { UserRole } from '@prisma/client';
 import { getCurrentUser } from './actions';
+import { deletePaginatedSongCache, deleteSongDetail } from '@/redis/utils';
+import { redis } from '@/redis/redis';
+import { keys } from '@/redis/keys';
 
 /**
  * Deletes Song
@@ -159,6 +162,10 @@ export const toggleFeatureSong = async (data: Song) => {
       },
     });
 
+    await deletePaginatedSongCache();
+    await deleteSongDetail();
+    await redis.del(keys.FEATURED_SONG);
+
     return {
       msg: `${song.title} is ${
         isFeatured ? 'removed from' : 'added to'
@@ -186,6 +193,8 @@ export const toggleFeatureArtist = async (data: IArtist) => {
         isFeatured: !isFeatured,
       },
     });
+
+    await redis.del(keys.FEATURED_ARTIST);
 
     return {
       msg: `${artist.name} is ${
