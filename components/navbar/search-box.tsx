@@ -1,6 +1,6 @@
 'use client';
 import { Search } from 'lucide-react';
-import { useParams, usePathname, useSearchParams } from 'next/navigation';
+import {  usePathname, useSearchParams } from 'next/navigation';
 
 import {
   Command,
@@ -15,9 +15,7 @@ import {
 import { useEffect, useState } from 'react';
 import { ScrollArea } from '../ui/scroll-area';
 import {
-  searchArtistByName,
   searchSongsAndArtistsByName,
-  searchSongsByName,
 } from '@/lib/public-actions/actions';
 import { Artist, Genre } from '@prisma/client';
 import SongTile, { songTileProps } from '../song-tile';
