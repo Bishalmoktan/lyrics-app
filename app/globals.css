@@ -52,3 +52,42 @@ body,
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes equalizer-1 {
+  0%, 100% { height: 10%; }
+  50% { height: 20%; }
+}
+
+@keyframes equalizer-2 {
+  0%, 100% { height: 40%; }
+  50% { height: 10%; }
+}
+
+@keyframes equalizer-3 {
+  0%, 100% { height: 25%; }
+  50% { height: 15%; }
+}
+
+@keyframes equalizer-4 {
+  0%, 100% { height: 40%; }
+  50% { height: 20%; }
+}
+
+.animate-equalizer-1 {
+  animation: equalizer-1 0.7s ease-in-out infinite;
+}
+
+.animate-equalizer-2 {
+  animation: equalizer-2 0.7s ease-in-out infinite;
+  animation-delay: 0.1s;
+}
+
+.animate-equalizer-3 {
+  animation: equalizer-3 0.7s ease-in-out infinite;
+  animation-delay: 0.2s;
+}
+
+.animate-equalizer-4 {
+  animation: equalizer-4 0.7s ease-in-out infinite;
+  animation-delay: 0.3s;
+}

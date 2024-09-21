@@ -11,7 +11,7 @@ interface songTileProps extends Song {
   Artist: Artist;
 }
 
-interface paingatedSongs {
+export interface paingatedSongs {
   songs: songTileProps[];
   totalSongs: number;
   totalPages: number;
@@ -256,6 +256,7 @@ export const getSongsByGenre = async (
   page: number = 1,
   pageSize: number = 10
 ) => {
+
   try {
     const skip = (page - 1) * pageSize;
     const cachedSongs = await redis.get(
@@ -278,6 +279,7 @@ export const getSongsByGenre = async (
       take: pageSize,
       include: {
         Artist: true,
+        
       },
     });
 
@@ -291,6 +293,7 @@ export const getSongsByGenre = async (
       },
     });
 
+    
     const response = {
       songs: res as songTileProps[],
       totalSongs,
@@ -405,6 +408,76 @@ export const searchArtistByName = async (query: string) => {
       },
     });
     return results;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+};
+
+/**
+ * Search song by song name or artist name
+ * @param query 
+ * @returns {
+ * songs,
+ * artists
+ * }
+ */
+export const searchSongsAndArtistsByName = async (query: string) => {
+  try {
+    const [songs, artists] = await Promise.all([
+      db.song.findMany({
+        take: 20,
+        where: {
+          OR: [{ title: { contains: query, mode: "insensitive" } }],
+        },
+        include: {
+          Artist: true,
+        },
+      }),
+      db.artist.findMany({
+        take: 20,
+        where: {
+          name: {
+            contains: query,
+            mode: "insensitive",
+          },
+        },
+      }),
+    ]);
+
+    return {
+      songs: songs as songTileProps[],
+      artists,
+    };
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+};
+
+
+export interface IArtistDetails extends Artist {
+  songs: Song[]
+}
+
+export const getArtistDetails = async (artistId: string) => {
+  try {
+    const artistDetails = await db.artist.findUnique({
+      where: { id: artistId },
+      include: {
+        songs: {
+          include: {
+            genres: true,            
+          },
+        },
+      },
+    });
+
+    if (!artistDetails) {
+      throw new Error('Artist not found');
+    }
+
+    return artistDetails as IArtistDetails;
   } catch (error: any) {
     console.log(error);
     throw new Error(error.message);

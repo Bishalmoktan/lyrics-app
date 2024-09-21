@@ -6,7 +6,7 @@ export default async function Home() {
   return (
     <div className="space-y-16">
       <HeroSection />
-      <Categories />
+      <Categories link='/search?type=' />
       <Suggestions />
     </div>
   );
