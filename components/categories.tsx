@@ -3,17 +3,17 @@ import Image from 'next/image';
 
 import Link from 'next/link';
 
-const Categories = async () => {
+const Categories = async ({link}: {link: string}) => {
   const categories = await getAllGenre();
   return (
     <div className="space-y-4">
-      <h3 className="text-2xl text-green">Categories</h3>
+      <h3 className="text-xl md:text-2xl text-green font-bold">Categories</h3>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {categories.map((category) => {
           
           return (
           <Link
-            href={`/search?type=${category.name}`}
+            href={`${link}${category.name}`}
             key={category.id}
             className={`p-4 ${category.backgroundColor} hover:bg-opacity-50 bg-opacity-20 transition-all rounded-md flex gap-4 justify-center items-center`}
           >

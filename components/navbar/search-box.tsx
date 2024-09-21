@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { ScrollArea } from '../ui/scroll-area';
 import {
   searchArtistByName,
+  searchSongsAndArtistsByName,
   searchSongsByName,
 } from '@/lib/public-actions/actions';
 import { Artist, Genre } from '@prisma/client';
@@ -23,11 +24,13 @@ import SongTile, { songTileProps } from '../song-tile';
 import Link from 'next/link';
 import Image from 'next/image';
 import ArtistTile from '../artist-tile';
+import { useDebounce } from 'use-debounce';
 
 const SearchBox = ({ genres }: { genres: Genre[] }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedQuery] = useDebounce(searchTerm, 300);
   const [songs, setSongs] = useState<songTileProps[] | []>([]);
   const [artists, setArtists] = useState<Artist[] | []>([]);
   const path = usePathname();
@@ -37,31 +40,26 @@ const SearchBox = ({ genres }: { genres: Genre[] }) => {
   useEffect(() => {
     setOpen(false);
   }, [path, type, artistId]);
+
+
   useEffect(() => {
-    setLoading(true);
-    const debounceTimer = setTimeout(async () => {
-      try {
-        if (searchTerm.trim() === '') {
-          setSongs([]);
-          setArtists([]);
-          return;
-        }
-
-        const resultSongs = await searchSongsByName(searchTerm);
-        const resultArtists = await searchArtistByName(searchTerm);
-        setSongs(resultSongs);
-        setArtists(resultArtists);
-      } catch (error) {
-        console.error('Error searching songs:', error);
-      } finally {
+    const fetchResults = async () => {
+      if (debouncedQuery) {
+        setLoading(true);
+        const results = await searchSongsAndArtistsByName(debouncedQuery);
+        setSongs(results.songs)
+        setArtists(results.artists)
         setLoading(false);
+      } else {
+        setSongs([])
+        setArtists([])
       }
-    }, 500);
-
-    return () => {
-      clearTimeout(debounceTimer);
     };
-  }, [searchTerm]);
+
+    fetchResults();
+  }, [debouncedQuery]);
+
+
 
   return (
     <>

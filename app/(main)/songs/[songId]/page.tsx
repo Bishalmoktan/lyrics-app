@@ -5,9 +5,9 @@ import { getSongDetail } from '@/lib/public-actions/actions';
 import { notFound } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
-const getSong = cache(async(postId: string) => {
-  const song = await getSongDetail(postId);
-  return song
+const getSong = cache(async(songId: string) => {
+  const song = await getSongDetail(songId);
+  return song;
 })
 
 
