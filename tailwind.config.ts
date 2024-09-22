@@ -20,7 +20,7 @@ const config = {
     extend: {
       height: {
         'custom-calc-screen': 'calc(100vh - 100px)',
-        'custom-calc-mobile': 'calc(100vh - 250px)',
+        'custom-calc-mobile': 'calc(100vh - 200px)',
       },
       colors: {
         brand: {

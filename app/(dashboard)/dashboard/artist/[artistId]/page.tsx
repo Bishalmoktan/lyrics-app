@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Play, Pause, MoreHorizontal, ChevronDown } from "lucide-react";
+import { Play, Pause, ChevronDown } from "lucide-react";
 import { useGlobalApp } from "@/hooks/use-global-app";
-import Loading from "@/components/loading";
+import Skeleton from "./_components/Skeleton"; 
 import { getArtistDetails, IArtistDetails } from "@/lib/public-actions/actions";
 import { Song } from "@prisma/client";
 import SongCard from "./_components/SongCard";
@@ -38,7 +38,28 @@ export default function ArtistPage({
   };
 
   if (isLoading) {
-    return <Loading />;
+    return (
+      <div className="bg-[#0E1729] min-h-screen text-white">
+        <header className="relative h-96 bg-gradient-to-b from-rose-500 to-[#0E1729] space-y-4 p-2">
+          <div className="inline-flex cursor-pointer items-center text-gray-400 p-4">
+            <ChevronDown className="mr-2" size={20} />
+            <span>Back to Browse</span>
+          </div>
+          <div className="absolute bottom-0 left-0 p-6 flex items-end">
+            <Skeleton width="200px" height="200px" className="rounded-full mr-6" />
+            <div>
+              <Skeleton width="300px" height="40px" className="mb-2" />
+              <Skeleton width="200px" height="20px" />
+            </div>
+          </div>
+        </header>
+        <main className="p-6">
+          <Skeleton width="150px" height="30px" className="mb-4" />
+          <Skeleton width="100%" height="20px" className="mb-4" />
+          <Skeleton width="100%" height="20px" className="mb-4" />
+        </main>
+      </div>
+    );
   }
 
   return (
@@ -90,59 +111,6 @@ export default function ArtistPage({
             ))}
           </ul>
         </section>
-
-        {/* <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">Albums</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {artist.albums.map((album: any) => (
-              <Link href={`/album/${album.id}`} key={album.id} className="group">
-                <div className="relative">
-                  <Image
-                    src={album.image}
-                    alt={album.title}
-                    width={200}
-                    height={200}
-                    className="rounded-lg shadow-lg"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Play size={40} className="text-white" />
-                  </div>
-                </div>
-                <h3 className="mt-2 font-medium">{album.title}</h3>
-                <p className="text-sm text-gray-400">{album.year}</p>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-4">Fans also like</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {artist.relatedArtists.map((relatedArtist: any) => (
-              <Link href={`/artist/${relatedArtist.id}`} key={relatedArtist.id} className="text-center group">
-                <div className="relative">
-                  <Image
-                    src={relatedArtist.image}
-                    alt={relatedArtist.name}
-                    width={150}
-                    height={150}
-                    className="rounded-full mx-auto"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Play size={40} className="text-white" />
-                  </div>
-                </div>
-                <h3 className="mt-2 font-medium">{relatedArtist.name}</h3>
-                <p className="text-sm text-gray-400">Artist</p>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-4">About</h2>
-          <p className="text-gray-300 max-w-3xl">{artist.biography}</p>
-        </section> */}
       </main>
     </div>
   );

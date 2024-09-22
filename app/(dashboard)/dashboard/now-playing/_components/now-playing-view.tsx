@@ -18,7 +18,7 @@ import bisaric from "@/public/logo.svg";
 import { useRouter } from "next/navigation";
 
 export default function NowPlayingView() {
-  const { currentSong, isPlaying, handlePlayPause } = useGlobalApp();
+  const { currentSong, isPlaying, handlePlayPause, previousSong, handleSongEnd } = useGlobalApp();
   const router = useRouter();
 
   return (
@@ -64,7 +64,7 @@ export default function NowPlayingView() {
                 </button>
                 <button
                   className="text-gray-400 hover:text-white"
-                  onClick={() => handlePlayPause()}
+                  onClick={() => previousSong()}
                 >
                   <SkipBack size={24} />
                 </button>
@@ -78,7 +78,7 @@ export default function NowPlayingView() {
                     <Play size={24} fill="white" strokeWidth={0} />
                   )}
                 </button>
-                <button className="text-gray-400 hover:text-white">
+                <button className="text-gray-400 hover:text-white" onClick={() => handleSongEnd()}>
                   <SkipForward size={24} />
                 </button>
                 <button className="text-gray-400 hover:text-white">
