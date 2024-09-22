@@ -11,7 +11,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Mail } from "lucide-react";
+import { LogOut, Mail, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 
 const Avatar = ({ session }: { session: Session | null}) => {
   if (!session) return;
@@ -52,6 +53,12 @@ const Avatar = ({ session }: { session: Session | null}) => {
               <Mail className="mr-2 h-4 w-4" />
               <span>{user.email}</span>
             </DropdownMenuItem>
+              <Link href={"/admin/songs"}>
+            <DropdownMenuItem>
+              <ShieldCheck className="mr-2 h-4 w-4" />
+              <span>Admin</span>
+            </DropdownMenuItem>
+              </Link>
             <DropdownMenuItem
               className="cursor-pointer text-red-500 focus:text-red-500"
               onClick={handleSignOut}

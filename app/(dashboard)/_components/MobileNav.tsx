@@ -39,6 +39,7 @@ export default function MobileNav() {
     getCurrentUser();
   }, []);
 
+
   return (
     <div className="md:hidden bg-[#0A1220] border-t border-gray-700">
       <div className="flex justify-center items-center h-16">
@@ -55,7 +56,8 @@ export default function MobileNav() {
             <span className="text-xs mt-1">{item.label}</span>
           </Link>
         ))}
-        <div className='h-full w-full mt-4'>
+        
+        <div className='w-full h-full mt-4'>
         <Avatar session={session}  />
         </div>
       </div>

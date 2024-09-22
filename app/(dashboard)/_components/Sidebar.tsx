@@ -42,7 +42,7 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        "bg-[#0A1220]  flex flex-col justify-between h-custom-calc-screen transition-all duration-300 ease-in-out -translate-x-full w-0 md:translate-x-0 md:w-64"
+        "bg-[#0A1220]  hidden md:flex flex-col justify-between h-custom-calc-screen transition-all duration-300 ease-in-out -translate-x-full w-0 md:translate-x-0 md:w-64"
       )}
     >
       <nav className="flex-1 p-6 space-y-6 mt-16 md:mt-0">
