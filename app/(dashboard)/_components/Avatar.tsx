@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, Mail, ShieldCheck } from "lucide-react";
 import Link from "next/link";
+import { UserRole } from "@prisma/client";
 
 const Avatar = ({ session }: { session: Session | null}) => {
   if (!session) return;
@@ -54,10 +55,10 @@ const Avatar = ({ session }: { session: Session | null}) => {
               <span>{user.email}</span>
             </DropdownMenuItem>
               <Link href={"/admin/songs"}>
-            <DropdownMenuItem>
+           {user?.role === UserRole.ADMIN && <DropdownMenuItem>
               <ShieldCheck className="mr-2 h-4 w-4" />
               <span>Admin</span>
-            </DropdownMenuItem>
+            </DropdownMenuItem>}
               </Link>
             <DropdownMenuItem
               className="cursor-pointer text-red-500 focus:text-red-500"
