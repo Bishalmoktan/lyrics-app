@@ -50,8 +50,6 @@ export default function PlaylistPage({
     };
     loadPlaylist();
     setPlayFromPlaylist(true);
-
-    return () => setPlayFromPlaylist(false);
   }, [params.playlistId]);
 
   const handleTrackPlay = (trackId: string) => {
