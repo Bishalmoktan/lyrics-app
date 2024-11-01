@@ -8,7 +8,7 @@ interface PlaylistCardProps {
   songs: Song[];
 }
 
-const PlaylistCard = async ({ playlist, songs }: PlaylistCardProps) => {
+const PlaylistCard = ({ playlist, songs }: PlaylistCardProps) => {
   return (
     <Link
       href={`/dashboard/playlist/${playlist.id}`}

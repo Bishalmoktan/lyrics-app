@@ -5,10 +5,8 @@ import Image from "next/image";
 import { Play, Pause, ChevronDown } from "lucide-react";
 import { useGlobalApp } from "@/hooks/use-global-app";
 import {
-  getArtistDetails,
   getPlaylistDetails,
   getSongsByPlaylistId,
-  IArtistDetails,
 } from "@/lib/public-actions/actions";
 import { Playlist, Song } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -17,7 +15,7 @@ import SongCard from "../../artist/[artistId]/_components/SongCard";
 import playlistImg from "@/public/playlist.jpeg";
 import PlaylistActionMenu from "@/app/(dashboard)/_components/PlaylistActionMenu";
 
-interface PlaylistPageProps extends Playlist {
+export interface PlaylistPageProps extends Playlist {
   songs: Song[];
 }
 
