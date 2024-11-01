@@ -1,6 +1,6 @@
 "use server";
 
-import { Artist, Genre, Song, User } from "@prisma/client";
+import { Artist, Genre, Playlist, Song, User } from "@prisma/client";
 import { db } from "../db";
 import { auth } from "@/auth";
 import { redis } from "@/redis/redis";
@@ -256,7 +256,6 @@ export const getSongsByGenre = async (
   page: number = 1,
   pageSize: number = 10
 ) => {
-
   try {
     const skip = (page - 1) * pageSize;
     const cachedSongs = await redis.get(
@@ -279,7 +278,6 @@ export const getSongsByGenre = async (
       take: pageSize,
       include: {
         Artist: true,
-        
       },
     });
 
@@ -293,7 +291,6 @@ export const getSongsByGenre = async (
       },
     });
 
-    
     const response = {
       songs: res as songTileProps[],
       totalSongs,
@@ -416,7 +413,7 @@ export const searchArtistByName = async (query: string) => {
 
 /**
  * Search song by song name or artist name
- * @param query 
+ * @param query
  * @returns {
  * songs,
  * artists
@@ -455,9 +452,8 @@ export const searchSongsAndArtistsByName = async (query: string) => {
   }
 };
 
-
 export interface IArtistDetails extends Artist {
-  songs: Song[]
+  songs: Song[];
 }
 
 export const getArtistDetails = async (artistId: string) => {
@@ -467,17 +463,300 @@ export const getArtistDetails = async (artistId: string) => {
       include: {
         songs: {
           include: {
-            genres: true,            
+            genres: true,
           },
         },
       },
     });
 
     if (!artistDetails) {
-      throw new Error('Artist not found');
+      throw new Error("Artist not found");
     }
 
     return artistDetails as IArtistDetails;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+};
+
+/**
+ * Get playlists for a user
+ */
+export const getPlaylists = async () => {
+  try {
+    const session = await auth();
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+
+    const playlists = await db.playlist.findMany({
+      where: { userId: session.user.id },
+      include: {
+        songs: true,
+      },
+    });
+
+    return {
+      playlists,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw Error(error.message);
+    } else {
+      throw Error("Something went wrong!");
+    }
+  }
+};
+/**
+ * Get playlists for a user
+ */
+export const getPlaylistsOnly = async () => {
+  try {
+    const session = await auth();
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+
+    const playlists = await db.playlist.findMany({
+      where: { userId: session.user.id },
+    });
+
+    return {
+      playlists,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw Error(error.message);
+    } else {
+      throw Error("Something went wrong!");
+    }
+  }
+};
+
+/**
+ * Get playlists for a user
+ */
+export const getPlaylistDetails = async (playlistId: string) => {
+  try {
+    const session = await auth();
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+
+    const playlist = await db.playlist.findFirst({
+      where: {
+        userId: session.user.id,
+        id: playlistId,
+      },
+      include: {
+        songs: true,
+      },
+    });
+
+    return {
+      playlist,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw Error(error.message);
+    } else {
+      throw Error("Something went wrong!");
+    }
+  }
+};
+
+/**
+ * Get playlists for a user
+ */
+export const createPlaylist = async (title: string) => {
+  try {
+    const session = await auth();
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+
+    const playlist = await db.playlist.create({
+      data: {
+        title,
+        userId: session.user.id!,
+      },
+    });
+
+    return {
+      msg: "Playlist created",
+      playlist,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw Error(error.message);
+    } else {
+      throw Error("Something went wrong!");
+    }
+  }
+};
+
+/**
+ * Add song to playlist
+ */
+export const addSongToPlaylist = async (songId: string, playlistId: string) => {
+  try {
+    const session = await auth();
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+
+    const res = await db.playlist.findFirst({
+      where: {
+        id: playlistId,
+        userId: session.user.id,
+      },
+      select: {
+        songs: {
+          where: {
+            id: songId,
+          },
+        },
+      },
+    });
+
+    if (res?.songs.length) {
+      return {
+        msg: "Song is already in this playlist.",
+      };
+    }
+
+    await db.playlist.update({
+      where: { id: playlistId, userId: session.user.id },
+      data: {
+        songs: {
+          connect: { id: songId },
+        },
+      },
+    });
+
+    return {
+      msg: "Song added to the playlist",
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw Error(error.message);
+    } else {
+      throw Error("Something went wrong!");
+    }
+  }
+};
+
+/**
+ * Rename playlist
+ */
+export const renamePlaylist = async (playlistId: string, title: string) => {
+  try {
+    const session = await auth();
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+
+    const playlist = await db.playlist.update({
+      where: {
+        id: playlistId,
+        userId: session.user.id,
+      },
+      data: {
+        title,
+      },
+    });
+
+    return {
+      msg: "Playlist renamed!",
+      playlist,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw Error(error.message);
+    } else {
+      throw Error("Something went wrong!");
+    }
+  }
+};
+
+/**
+ * Delete playlist
+ */
+export const deletePlaylist = async (playlistId: string) => {
+  try {
+    const session = await auth();
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+
+    const playlist = await db.playlist.delete({
+      where: {
+        id: playlistId,
+        userId: session.user.id!,
+      },
+    });
+
+    return {
+      msg: "Playlist Deleted",
+      playlist,
+    };
+  } catch (error) {
+    if (error instanceof Error) {
+      throw Error(error.message);
+    } else {
+      throw Error("Something went wrong!");
+    }
+  }
+};
+
+/**
+ * A server action to get song by artist
+ */
+export const getSongsByPlaylistId = async (
+  playlistId: string,
+  page: number = 1,
+  pageSize: number = 10
+) => {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+    const skip = (page - 1) * pageSize;
+
+    const res = await db.playlist.findFirst({
+      where: {
+        id: playlistId,
+        userId: session.user.id,
+      },
+      select: {
+        songs: {
+          include: {
+            Artist: true,
+          },
+        },
+      },
+      skip: skip,
+      take: pageSize,
+    });
+
+    const totalSongs = await db.playlist.count({
+      where: {
+        id: playlistId,
+        userId: session.user.id,
+      },
+    });
+
+    const response = {
+      songs: res?.songs as songTileProps[],
+      totalSongs,
+      totalPages: Math.ceil(totalSongs / pageSize),
+      currentPage: page,
+    };
+
+    return response;
   } catch (error: any) {
     console.log(error);
     throw new Error(error.message);

@@ -16,9 +16,16 @@ import { useGlobalApp } from "@/hooks/use-global-app";
 import LyricsContainer from "@/components/song/lyrics-container";
 import bisaric from "@/public/logo.svg";
 import { useRouter } from "next/navigation";
+import SongActionMenu from "@/app/(dashboard)/_components/SongActionMenu";
 
 export default function NowPlayingView() {
-  const { currentSong, isPlaying, handlePlayPause, previousSong, handleSongEnd } = useGlobalApp();
+  const {
+    currentSong,
+    isPlaying,
+    handlePlayPause,
+    previousSong,
+    handleSongEnd,
+  } = useGlobalApp();
   const router = useRouter();
 
   return (
@@ -51,7 +58,7 @@ export default function NowPlayingView() {
                 </p>
               </div>
               <button className="text-gray-400 hover:text-white">
-                <MoreHorizontal size={24} />
+                <SongActionMenu songId={currentSong?.id || ""} />
               </button>
             </div>
             <div className="flex items-center justify-between mb-6">
@@ -78,7 +85,10 @@ export default function NowPlayingView() {
                     <Play size={24} fill="white" strokeWidth={0} />
                   )}
                 </button>
-                <button className="text-gray-400 hover:text-white" onClick={() => handleSongEnd()}>
+                <button
+                  className="text-gray-400 hover:text-white"
+                  onClick={() => handleSongEnd()}
+                >
                   <SkipForward size={24} />
                 </button>
                 <button className="text-gray-400 hover:text-white">

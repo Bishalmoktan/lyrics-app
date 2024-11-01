@@ -1,5 +1,10 @@
 "use client";
-import { getSongDetail, getSongsByArtist, ISongDetail, paingatedSongs } from "@/lib/public-actions/actions";
+import {
+  getSongDetail,
+  getSongsByArtist,
+  ISongDetail,
+  paingatedSongs,
+} from "@/lib/public-actions/actions";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createContext } from "react";
 import { toast } from "sonner";
@@ -21,6 +26,8 @@ export type AppContextType = {
   setIsQueueOpen: React.Dispatch<React.SetStateAction<boolean>>;
   queue: paingatedSongs | null;
   setQueue: React.Dispatch<React.SetStateAction<paingatedSongs | null>>;
+  playFromPlaylist: boolean;
+  setPlayFromPlaylist: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const randomSongID = [
@@ -28,20 +35,24 @@ const randomSongID = [
   "clybevl8n0001v2pcljtf2hsc",
   "clyrfabqn0001effa1hngecuq",
   "cm14xkgfh0001ez03t94bupqg",
-  "clyv6exty0001sifo7mntcec2"
-]
+  "clyv6exty0001sifo7mntcec2",
+];
 
 export const AppContext = createContext<AppContextType | null>(null);
 
-export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
+export const AppContextProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [timestamp, setTimestamp] = useState<number>(0);
   const [currentSongId, setCurrentSongId] = useState<string>("");
   const [currentSong, setCurrentSong] = useState<ISongDetail | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isQueueOpen, setIsQueueOpen] = useState<boolean>(false);
+  const [playFromPlaylist, setPlayFromPlaylist] = useState<boolean>(false);
   const [queue, setQueue] = useState<paingatedSongs | null>(null);
   const playerRef = useRef<any>(null);
-
 
   const handlePlayPause = () => {
     if (isPlaying) {
@@ -53,13 +64,15 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
   };
 
   const getRandomSongId = useCallback(() => {
-      const randomIndex = Math.floor(Math.random() * randomSongID.length);
-      return randomSongID[randomIndex];
+    const randomIndex = Math.floor(Math.random() * randomSongID.length);
+    return randomSongID[randomIndex];
   }, []);
 
   const handleSongEnd = () => {
     if (queue && queue.songs && queue.songs.length > 0) {
-      const currentIndex = queue.songs.findIndex(song => song.id === currentSongId);
+      const currentIndex = queue.songs.findIndex(
+        (song) => song.id === currentSongId
+      );
       const nextIndex = currentIndex + 1;
       if (nextIndex < queue.songs.length) {
         setCurrentSongId(queue.songs[nextIndex].id);
@@ -71,16 +84,18 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
   };
 
   const previousSong = () => {
-    if(queue){
-      const currentIndex = queue.songs.findIndex(song => song.id === currentSongId);
+    if (queue) {
+      const currentIndex = queue.songs.findIndex(
+        (song) => song.id === currentSongId
+      );
       const previousIndex = currentIndex - 1;
-      if(previousIndex >= 0){
+      if (previousIndex >= 0) {
         setCurrentSongId(queue.songs[previousIndex].id);
       } else {
         setCurrentSongId(queue.songs[0].id);
       }
     }
-  }
+  };
 
   useEffect(() => {
     const getCurrentSong = async () => {
@@ -98,8 +113,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     }
   }, [currentSongId]);
 
- 
-
   useEffect(() => {
     const getQueueSong = async () => {
       try {
@@ -113,7 +126,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
       }
     };
 
-    if (currentSong) {
+    if (currentSong && !playFromPlaylist) {
       getQueueSong();
     }
   }, [currentSong]);
@@ -136,7 +149,9 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         queue,
         setQueue,
         handleSongEnd,
-        previousSong
+        previousSong,
+        setPlayFromPlaylist,
+        playFromPlaylist,
       }}
     >
       {children}

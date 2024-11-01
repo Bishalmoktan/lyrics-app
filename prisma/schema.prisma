@@ -15,16 +15,18 @@ enum UserRole {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   emailVerified DateTime?
-  role          UserRole  @default(USER)
+  role          UserRole   @default(USER)
   password      String?
   image         String?
   accounts      Account[]
   songs         Song[]
   comments      Comment[]
+  playlists     Playlist[]
+  likedSongs    Song[]     @relation("LikedSongs")
 }
 
 model Account {
@@ -80,8 +82,10 @@ model Song {
   User     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String
 
-  genres   Genre[]
-  comments Comment[]
+  genres    Genre[]
+  comments  Comment[]
+  likedBy   User[]     @relation("LikedSongs")
+  playlists Playlist[] @relation("PlaylistSongs")
 
   @@index([songId, artistId, userId])
 }
@@ -98,4 +102,17 @@ model Comment {
   songId String
 
   @@index([userId, songId])
+}
+
+model Playlist {
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  songs Song[] @relation("PlaylistSongs")
+
+  @@index([userId])
 }

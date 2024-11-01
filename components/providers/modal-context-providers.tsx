@@ -1,22 +1,28 @@
-'use client';
+"use client";
 
-import { IArtist } from '@/app/(admin)/admin/artists/columns';
-import { Song } from '@/app/(admin)/admin/songs/columns';
-import { IUser } from '@/app/(admin)/admin/users/columns';
-import React, { createContext, useState } from 'react';
+import { IArtist } from "@/app/(admin)/admin/artists/columns";
+import { Song } from "@/app/(admin)/admin/songs/columns";
+import { IUser } from "@/app/(admin)/admin/users/columns";
+import { Playlist } from "@prisma/client";
+import React, { createContext, useState } from "react";
 
 type modalType =
-  | 'deleteSong'
-  | 'deleteArtist'
-  | 'deleteUser'
-  | 'updateUser'
-  | 'toggleFeatureSong'
-  | 'toggleFeatureArtist'
+  | "deleteSong"
+  | "deleteArtist"
+  | "deleteUser"
+  | "updateUser"
+  | "toggleFeatureSong"
+  | "toggleFeatureArtist"
+  | "createPlaylist"
+  | "deletePlaylist"
+  | "renamePlaylist"
   | null;
+
 type modalDataType = {
   song?: Song;
   artist?: IArtist;
   user?: IUser;
+  playlist?: Playlist;
 };
 
 export type ModalContextType = {

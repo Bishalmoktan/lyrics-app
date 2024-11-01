@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, Search, Music } from "lucide-react";
+import { Home, Search, Music, ListMusic } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -24,6 +24,11 @@ const sidebarLinks = [
     label: "Now playing",
     path: "/dashboard/now-playing",
     icon: Music,
+  },
+  {
+    label: "Playlists",
+    path: "/dashboard/playlist",
+    icon: ListMusic,
   },
 ];
 
@@ -66,7 +71,7 @@ export default function Sidebar() {
         </div>
       </nav>
       <div className="p-6 border-t border-gray-700">
-        <Avatar session={session}/>
+        <Avatar session={session} />
       </div>
     </aside>
   );
