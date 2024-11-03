@@ -1,31 +1,31 @@
-'use client'
+"use client";
 
-import { Home, Search, Music } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { Home, Search, ListMusic } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import Avatar from './Avatar';
-import { useEffect, useState } from 'react';
-import { getSession } from 'next-auth/react';
-import { Session } from 'next-auth';
+import Avatar from "./Avatar";
+import { useEffect, useState } from "react";
+import { getSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 const routes = [
   {
     icon: Home,
-    label: 'Home',
-    href: '/dashboard',
+    label: "Home",
+    href: "/dashboard",
   },
   {
     icon: Search,
-    label: 'Search',
-    href: '/dashboard/search',
+    label: "Search",
+    href: "/dashboard/search",
   },
   {
-    icon: Music,
-    label: 'Now Playing',
-    href: '/dashboard/now-playing',
-  }
-]
+    label: "Playlists",
+    href: "/dashboard/playlist",
+    icon: ListMusic,
+  },
+];
 
 export default function MobileNav() {
   const pathname = usePathname();
@@ -38,7 +38,6 @@ export default function MobileNav() {
     };
     getCurrentUser();
   }, []);
-
 
   return (
     <div className="md:hidden bg-[#0A1220] border-t border-gray-700">
@@ -56,11 +55,11 @@ export default function MobileNav() {
             <span className="text-xs mt-1">{item.label}</span>
           </Link>
         ))}
-        
-        <div className='w-full h-full mt-4'>
-        <Avatar session={session}  />
+
+        <div className="w-full h-full mt-4">
+          <Avatar session={session} />
         </div>
       </div>
     </div>
-  )
+  );
 }

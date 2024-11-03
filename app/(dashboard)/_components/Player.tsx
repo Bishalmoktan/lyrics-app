@@ -82,6 +82,7 @@ export default function Player() {
   const handleStateChange = (event: { target: any; data: number }) => {
     if (event.data === 1) {
       setIsPlaying(true);
+      playerRef.current.internalPlayer.playVideo();
       if (!progressIntervalRef.current) {
         progressIntervalRef.current = setInterval(async () => {
           const time = await playerRef.current.internalPlayer.getCurrentTime();
@@ -145,7 +146,7 @@ export default function Player() {
                 className="size-10 object-cover rounded-lg"
               />
               <div className="flex flex-col gap-1 overflow-hidden">
-                <strong className="text-sm font-semibold text-white truncate">
+                <strong className="text-sm w-20 font-semibold text-white truncate">
                   {currentSong?.title || "Song"}
                 </strong>
                 <span className="text-xs text-gray-400 truncate">
