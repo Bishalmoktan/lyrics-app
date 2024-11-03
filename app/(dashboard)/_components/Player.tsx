@@ -267,7 +267,7 @@ export default function Player() {
       <div className="hidden">
         <YouTube
           videoId={songId || ""}
-          opts={{ playerVars: { controls: 0, autoplay: 1 } }}
+          opts={{ playerVars: { controls: 0, autoplay: 1, playsinline: 1 } }}
           onReady={handleReady}
           onStateChange={handleStateChange}
           onEnd={handleSongEnd}
