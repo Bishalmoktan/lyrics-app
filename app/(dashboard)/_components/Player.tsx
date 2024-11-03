@@ -17,6 +17,7 @@ import { useGlobalApp } from "@/hooks/use-global-app";
 import bisaric from "@/public/logo.svg";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import SongActionMenu from "./SongActionMenu";
 
 export default function Player() {
   const [currentTime, setCurrentTime] = useState(0);
@@ -153,6 +154,8 @@ export default function Player() {
               </div>
             </Link>
             <div className="flex gap-4 items-center">
+              {currentSong && <SongActionMenu songId={currentSong.id} />}
+
               <Link
                 href={"/dashboard/now-playing"}
                 className={`text-gray-400 hover:text-white ${pathname === "/dashboard/now-playing" ? "text-rose-500" : ""}`}
@@ -166,27 +169,27 @@ export default function Player() {
                 <LayoutList size={20} />
               </div>
               <div className="flex items-center gap-2 md:gap-6">
-              <SkipBack
-                size={20}
-                className="text-gray-400 hover:text-white cursor-pointer"
-                onClick={previousSong}
-              />
-              <div
-                className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center cursor-pointer rounded-full bg-rose-500 text-black hover:bg-rose-600 transition-colors"
-                onClick={handlePlayPause}
-              >
-                {isPlaying ? (
-                  <Pause fill="white" strokeWidth={0} size={16} />
-                ) : (
-                  <Play fill="white" strokeWidth={0} size={16} />
-                )}
+                <SkipBack
+                  size={20}
+                  className="text-gray-400 hover:text-white cursor-pointer"
+                  onClick={previousSong}
+                />
+                <div
+                  className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center cursor-pointer rounded-full bg-rose-500 text-black hover:bg-rose-600 transition-colors"
+                  onClick={handlePlayPause}
+                >
+                  {isPlaying ? (
+                    <Pause fill="white" strokeWidth={0} size={16} />
+                  ) : (
+                    <Play fill="white" strokeWidth={0} size={16} />
+                  )}
+                </div>
+                <SkipForward
+                  size={20}
+                  className="text-gray-400 hover:text-white cursor-pointer"
+                  onClick={handleSongEnd}
+                />
               </div>
-              <SkipForward
-                size={20}
-                className="text-gray-400 hover:text-white cursor-pointer"
-                onClick={handleSongEnd}
-              />
-            </div>
             </div>
           </div>
 
@@ -231,7 +234,6 @@ export default function Player() {
               </span>
             </div>
           </div>
-
         </div>
         <div className="hidden md:flex items-center gap-4 justify-end">
           <Link
