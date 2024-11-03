@@ -36,7 +36,29 @@ jobs:
             NEXT_PUBLIC_CLOUDINARY_API_KEY=${{ secrets.NEXT_PUBLIC_CLOUDINARY_API_KEY }}
             CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
             REDIS_URL=${{ secrets.REDIS_URL }}
-            RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
 
       - name: Verify Pushed Image
         run: docker pull bishalmoktan/bisaric:latest
+
+      - name: Deploy to DigitalOcean
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull bishalmoktan/bisaric:latest
+            docker stop bisaric || true
+            docker rm bisaric || true
+            docker run -d --name bisaric -p 3000:3000 \
+              -e RESEND_API_KEY=${{ secrets.RESEND_API_KEY }} \
+              -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
+              -e AUTH_SECRET=${{ secrets.AUTH_SECRET }} \
+              -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
+              -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
+              -e NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }} \
+              -e NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }} \
+              -e NEXT_PUBLIC_CLOUDINARY_API_KEY=${{ secrets.NEXT_PUBLIC_CLOUDINARY_API_KEY }} \
+              -e CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} \
+              -e REDIS_URL=${{ secrets.REDIS_URL }} \
+              bishalmoktan/bisaric:latest
