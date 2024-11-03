@@ -25,6 +25,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: bishalmoktan/bisaric:latest
+          build-args: |
+            RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
 
       - name: Verify Pushed Image
         run: docker pull bishalmoktan/bisaric:latest

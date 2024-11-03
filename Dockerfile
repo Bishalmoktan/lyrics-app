@@ -1,5 +1,7 @@
 FROM node:20.12.0-alpine3.19
 
+ARG RESEND_API_KEY
+
 WORKDIR /app
 
 COPY package.json package-lock.json ./
