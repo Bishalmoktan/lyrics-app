@@ -80,9 +80,9 @@ export default function Player() {
   };
 
   const handleStateChange = (event: { target: any; data: number }) => {
+    console.log(event);
     if (event.data === 1) {
       setIsPlaying(true);
-      playerRef.current.internalPlayer.playVideo();
       if (!progressIntervalRef.current) {
         progressIntervalRef.current = setInterval(async () => {
           const time = await playerRef.current.internalPlayer.getCurrentTime();
@@ -93,6 +93,9 @@ export default function Player() {
       setIsPlaying(false);
       clearInterval(progressIntervalRef.current!);
       progressIntervalRef.current = undefined;
+    } else if (event.data === 5) {
+      setIsPlaying(true);
+      playerRef.current.internalPlayer.playVideo();
     }
   };
 
@@ -268,7 +271,7 @@ export default function Player() {
       <div className="hidden">
         <YouTube
           videoId={songId || ""}
-          opts={{ playerVars: { controls: 0, autoplay: 1, playsinline: 1 } }}
+          opts={{ playerVars: { controls: 0 } }}
           onReady={handleReady}
           onStateChange={handleStateChange}
           onEnd={handleSongEnd}
