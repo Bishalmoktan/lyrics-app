@@ -52,6 +52,7 @@ jobs:
             docker rm bisaric || true
             docker run -d --name bisaric -p 3000:3000 \
               -e RESEND_API_KEY=${{ secrets.RESEND_API_KEY }} \
+              -e AUTH_TRUST_HOST=${{ secrets.AUTH_TRUST_HOST }} \
               -e NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} \
               -e DATABASE_URL=${{ secrets.DATABASE_URL }} \
               -e AUTH_SECRET=${{ secrets.AUTH_SECRET }} \
