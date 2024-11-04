@@ -77,10 +77,10 @@ export default function Player() {
 
   const handleReady = (event: { target: any }) => {
     setDuration(event.target.getDuration());
+    setIsMuted(true);
   };
 
   const handleStateChange = (event: { target: any; data: number }) => {
-    console.log(event);
     if (event.data === 1) {
       setIsPlaying(true);
       if (!progressIntervalRef.current) {
@@ -93,9 +93,6 @@ export default function Player() {
       setIsPlaying(false);
       clearInterval(progressIntervalRef.current!);
       progressIntervalRef.current = undefined;
-    } else if (event.data === 5) {
-      setIsPlaying(true);
-      playerRef.current.internalPlayer.playVideo();
     }
   };
 
@@ -271,10 +268,16 @@ export default function Player() {
       <div className="hidden">
         <YouTube
           videoId={songId || ""}
-          opts={{ playerVars: { controls: 0 } }}
+          opts={{ playerVars: { controls: 0, autoplay: 1, mute: 1 } }}
           onReady={handleReady}
           onStateChange={handleStateChange}
           onEnd={handleSongEnd}
+          onPlay={() => {
+            setTimeout(() => {
+              setIsMuted(false);
+              playerRef.current.internalPlayer.unMute();
+            }, 500);
+          }}
           ref={playerRef}
         />
       </div>
