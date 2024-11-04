@@ -18,6 +18,7 @@ import bisaric from "@/public/logo.svg";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SongActionMenu from "./SongActionMenu";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 
 export default function Player() {
   const [currentTime, setCurrentTime] = useState(0);
@@ -26,6 +27,7 @@ export default function Player() {
   const [isMuted, setIsMuted] = useState(false);
   const [songId, setSongId] = useState<string | null>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout>();
+  const isMobile = useIsMobile();
 
   const pathname = usePathname();
 
@@ -77,7 +79,9 @@ export default function Player() {
 
   const handleReady = (event: { target: any }) => {
     setDuration(event.target.getDuration());
-    setIsMuted(true);
+    if (isMobile) {
+      setIsMuted(true);
+    }
   };
 
   const handleStateChange = (event: { target: any; data: number }) => {
@@ -102,6 +106,30 @@ export default function Player() {
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   }, []);
 
+  useEffect(() => {
+    if (isMobile) {
+      const handleInitialInteraction = () => {
+        if (playerRef.current) {
+          playerRef.current.internalPlayer.unMute();
+          setIsMuted(false);
+          document.removeEventListener("touchstart", handleInitialInteraction);
+          document.removeEventListener("click", handleInitialInteraction);
+        }
+      };
+
+      document.addEventListener("touchstart", handleInitialInteraction, {
+        once: true,
+      });
+      document.addEventListener("click", handleInitialInteraction, {
+        once: true,
+      });
+
+      return () => {
+        document.removeEventListener("touchstart", handleInitialInteraction);
+        document.removeEventListener("click", handleInitialInteraction);
+      };
+    }
+  }, []);
   // const handleSkip = (amount: number) => {
   //   const newTime = currentTime + amount
   //   const clampedTime = Math.max(0, Math.min(newTime, duration))
@@ -237,6 +265,7 @@ export default function Player() {
           </div>
         </div>
         <div className="hidden md:flex items-center gap-4 justify-end">
+          {currentSong && <SongActionMenu songId={currentSong.id} />}
           <Link
             href={"/dashboard/now-playing"}
             className={`text-gray-400 hover:text-white ${pathname === "/dashboard/now-playing" ? "text-rose-500" : ""}`}
@@ -268,16 +297,17 @@ export default function Player() {
       <div className="hidden">
         <YouTube
           videoId={songId || ""}
-          opts={{ playerVars: { controls: 0, autoplay: 1, mute: 1 } }}
+          opts={{
+            playerVars: {
+              controls: 0,
+              autoplay: 1,
+              playsinline: 1,
+              mute: isMobile,
+            },
+          }}
           onReady={handleReady}
           onStateChange={handleStateChange}
           onEnd={handleSongEnd}
-          onPlay={() => {
-            setTimeout(() => {
-              setIsMuted(false);
-              playerRef.current.internalPlayer.unMute();
-            }, 500);
-          }}
           ref={playerRef}
         />
       </div>
