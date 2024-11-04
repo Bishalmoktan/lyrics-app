@@ -3,7 +3,6 @@
 import Image from "next/image";
 import {
   ChevronDown,
-  MoreHorizontal,
   Heart,
   Shuffle,
   SkipBack,
