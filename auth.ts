@@ -1,15 +1,15 @@
-import NextAuth, { type DefaultSession } from 'next-auth';
-import authConfig from '@/auth.config';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import { db } from '@/lib/db';
-import { getUserById } from './data/user';
-import { UserRole } from '@prisma/client';
+import NextAuth, { type DefaultSession } from "next-auth";
+import authConfig from "@/auth.config";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { db } from "@/lib/db";
+import { getUserById } from "./data/user";
+import { UserRole } from "@prisma/client";
 
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session {
     user: {
       role: UserRole;
-    } & DefaultSession['user'];
+    } & DefaultSession["user"];
   }
 }
 
@@ -20,7 +20,7 @@ export const {
   signOut,
 } = NextAuth({
   pages: {
-    signIn: '/login',
+    signIn: "/login",
   },
   events: {
     async linkAccount({ user }) {
@@ -56,7 +56,27 @@ export const {
       return token;
     },
   },
-  session: { strategy: 'jwt' },
+  session: { strategy: "jwt" },
   adapter: PrismaAdapter(db),
   ...authConfig,
+  cookies: {
+    csrfToken: {
+      name: "next-auth.csrf-token",
+      options: {
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: true,
+      },
+    },
+    pkceCodeVerifier: {
+      name: "next-auth.pkce.code_verifier",
+      options: {
+        httpOnly: true,
+        sameSite: "none",
+        path: "/",
+        secure: true,
+      },
+    },
+  },
 });
