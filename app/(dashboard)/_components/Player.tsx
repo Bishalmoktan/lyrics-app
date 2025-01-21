@@ -154,8 +154,6 @@ export default function Player() {
               </div>
             </Link>
             <div className="flex gap-4 items-center">
-              {currentSong && <SongActionMenu songId={currentSong.id} />}
-
               <Link
                 href={"/dashboard/now-playing"}
                 className={`text-gray-400 hover:text-white ${pathname === "/dashboard/now-playing" ? "text-rose-500" : ""}`}
@@ -168,6 +166,8 @@ export default function Player() {
               >
                 <LayoutList size={20} />
               </div>
+              {currentSong && <SongActionMenu songId={currentSong.id} />}
+
               <div className="flex items-center gap-2 md:gap-6">
                 <SkipBack
                   size={20}
