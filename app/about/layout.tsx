@@ -1,6 +1,6 @@
-import Footer from '@/components/footer';
-import Navbar from '@/components/navbar/navbar';
-import React from 'react';
+import Footer from "@/components/footer";
+import Navbar from "@/components/navbar/navbar";
+import React from "react";
 
 interface AboutLayoutProps {
   children: React.ReactNode;
@@ -9,10 +9,8 @@ interface AboutLayoutProps {
 const AboutLayout: React.FC<AboutLayoutProps> = ({ children }) => {
   return (
     <div className="flex flex-col gap-16 min-h-[100vh]">
-      <div className="container">
-        <Navbar />
-      </div>
-      {children}
+      <Navbar />
+      <div className="pt-24">{children}</div>
       <div className="container">
         <Footer />
       </div>
