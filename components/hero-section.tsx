@@ -1,39 +1,41 @@
-import Image from 'next/image';
-import { Button } from './ui/button';
-import Link from 'next/link';
+import Image from "next/image";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
 const HeroSection = () => {
   return (
-    <div className="space-y-6 my-8 animate-move-up">
-      <h1 className="text-3xl md:text-5xl md:max-w-[50vw] text-center md:text-left font-bold">
-        Discover the Music Behind the Words
-      </h1>
-      <div className="flex flex-col md:flex-row gap-8">
-        <div className="relative w-full md:flex-1 h-[50vh]">
-          <Image
-            src={'/heroImg.png'}
-            fill
-            alt="Person playing guitar"
-            className="object-cover rounded-md"
-          />
-        </div>
-        <div className="flex-1 p-4 flex flex-col justify-center gap-4">
-          <div>
-            <h3 className="text-xl md:text-2xl font-bold">
-              Uncover the Stories Behind the Songs
-            </h3>
-            <p>
+    <section className="relative pt-24 pb-20 md:pt-32 md:pb-32">
+      <div className="container mx-auto px-4">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="space-y-6">
+            <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+              Discover the Music Behind the Words
+            </h1>
+            <p className="text-lg text-slate-300 leading-relaxed">
               Are you curious about the stories, emotions, and inspirations
-              woven into the lyrics of your favorite songs? Welcome to
-              BISARIC, your portal to the lyrical world of music!
+              woven into the lyrics of your favorite songs? Welcome to BISARIO,
+              your portal to the lyrical world of music!
             </p>
+            <Button
+              size="lg"
+              className="bg-gradient-to-r text-white from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            >
+              Explore Now
+            </Button>
           </div>
-          <Button className="w-max">
-            <Link href={"/search?songs=all"}>Explore</Link>
-          </Button>
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl blur-3xl" />
+            <Image
+              src={"/heroImg.png"}
+              alt="Musician performing"
+              width={600}
+              height={400}
+              className="rounded-2xl shadow-2xl relative rotate-6 hover:rotate-0 transition-all"
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 export default HeroSection;
