@@ -1,13 +1,27 @@
 import { BisaricReceiveEmail } from '@/emails/receive';
 import { BisaricSendEmail } from '@/emails/send';
 import { Resend } from 'resend';
-
+import { spaming } from '@/lib/spamChecking';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(req: Request, res: Response) {
-    const {email, name, message} = await req.json();
+export async function POST(req: Request) {
   try {
-    const { data, error } = await resend.emails.send({
+    const { email, name, message } = await req.json();
+
+
+    const spamResult = await spaming(name, message);
+    console.log(spamResult);
+
+    if (spamResult.isSpam) {
+      return Response.json({
+        message:spamResult.reason
+      },
+      { status: 422 }
+      );
+    }
+
+       
+   const { data, error } = await resend.emails.send({
       from: 'Bisaric <noreply@bisaric.com>',
       to: ['bishalmoktan270@gmail.com'],
       subject: 'Message from Bisaric',
@@ -30,12 +44,30 @@ export async function POST(req: Request, res: Response) {
     }
 
 
-
     return Response.json({
       send: response,
       receive: data
     });
+    
+
   } catch (error) {
-    return Response.json({ error }, { status: 500 });
+    console.log("the error is ",error)
+    return new Response(
+      JSON.stringify({ message: "Server error" }),
+      { status: 500 }
+    );
   }
+
+
 }
+
+
+
+
+   
+
+
+
+
+
+

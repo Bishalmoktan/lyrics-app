@@ -51,9 +51,11 @@ const ContactForm = () => {
         },
         body: JSON.stringify(values),
       };
-      await fetch("/api/mail", headerOptions);
-      
-      toast.success("Your messsage has been sent.", {
+      const response = await fetch("/api/mail", headerOptions);
+      const data = await response.json();
+
+     if(response.ok){
+       toast.success("Your messsage has been sent.", {
         duration: 3000,
         position: "top-center",
       });
@@ -61,6 +63,12 @@ const ContactForm = () => {
       setTimeout(() => {
         setShowConfetti(false);
       }, 3000)
+     } else {
+       toast.error(data.message || "Something went wrong", {
+        duration: 3000,
+        position: "top-center",
+      });
+     }
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong", {
